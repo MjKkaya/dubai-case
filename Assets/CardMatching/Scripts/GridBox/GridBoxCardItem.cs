@@ -1,4 +1,5 @@
 using CardMatching.Datas;
+using CardMatching.Events;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -102,6 +103,7 @@ namespace CardMatching.GridBox
             isOpen =! isOpen;
             FlipCard(isOpen);
             _onPointerClick?.Invoke(eventData);
+            UIEvents.FlippingCard?.Invoke();
         }
     }
 }

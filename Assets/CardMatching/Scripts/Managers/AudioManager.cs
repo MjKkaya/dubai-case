@@ -1,3 +1,4 @@
+using CardMatching.ScriptableObjects;
 using UnityEngine;
 
 
@@ -5,6 +6,22 @@ namespace CardMatching.Managers
 {
     public class AudioManager : MonoBehaviour
     {
-        [SerializeField] AudioSource m_SFXAudioSource;
+        public AudioSettingsSO AudioSettingsData => _audioSettingsData;
+
+
+        [Tooltip("AudioSettings ScriptableObject storing sounds data and volume settings")]
+        [SerializeField] AudioSettingsSO _audioSettingsData;
+
+        [SerializeField] AudioSource _audioSource;
+
+
+        public void PlaySFX(AudioClip clip)
+        {
+            _audioSource.Stop();
+            if (clip != null)
+                _audioSource.PlayOneShot(clip);
+            else
+                _audioSource.Stop();
+        }
     }
 }

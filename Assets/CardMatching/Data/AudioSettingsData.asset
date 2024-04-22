@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0ecb8498f768479ea97ff9302dd4b11, type: 3}
+  m_Name: AudioSettingsData
+  m_EditorClassIdentifier: 
+  _flippingCardSound: {fileID: 8300000, guid: 0e7ef2003db834d3ebfd1d10f153bf94, type: 3}
+  _matchingCardSound: {fileID: 8300000, guid: 3cbac25bc424541af9f5e763441c3030, type: 3}
+  _mismatchingCardSound: {fileID: 8300000, guid: fc95c83ded4c646fb8ef77c50cf54a00, type: 3}
+  _gameOverSound: {fileID: 8300000, guid: f5ed3cb5cbcd94c70b90c7d5fbce88ae, type: 3}
