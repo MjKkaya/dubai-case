@@ -16,11 +16,15 @@ MonoBehaviour:
   FlipAnimationEase: 9
   _cardCoverSprite: {fileID: 21300000, guid: f2b376ffc2f4d4931ae2df5eeb7f6413, type: 3}
   _cardIconList:
+  - {fileID: 21300000, guid: 08df4162482644bd6a90ca37dd66ee25, type: 3}
   - {fileID: 21300000, guid: f276efc2b17674b0e80f3b5d49b0563b, type: 3}
   - {fileID: 21300000, guid: ebba94e8a4c584581b6de9a785355c45, type: 3}
   - {fileID: 21300000, guid: e37c05b058a9d45bf894878297c2b2f0, type: 3}
+  - {fileID: 21300000, guid: 827d46f87a60941c68859cc96f351039, type: 3}
+  - {fileID: 21300000, guid: ac41a20a6696f472f9562f9164f193c2, type: 3}
   - {fileID: 21300000, guid: 4a859bde803c44109a4fddca31f21c47, type: 3}
+  - {fileID: 21300000, guid: cd704bc2e53414f2cb4b8951be1d80ea, type: 3}
   - {fileID: 21300000, guid: 5385dc4c882724441b681fdf75ff2053, type: 3}
   - {fileID: 21300000, guid: 7b27016e5e4bd4b23a0e120603427b43, type: 3}
-  - {fileID: 21300000, guid: 2eafc9b3ee3df4c01a455ec3a9f08ce4, type: 3}
+  - {fileID: 21300000, guid: 784fd2b82aefc42738e6c9db990d29db, type: 3}
   - {fileID: 21300000, guid: ebc4ce11bc32640f3b5d0c97d2a205d2, type: 3}

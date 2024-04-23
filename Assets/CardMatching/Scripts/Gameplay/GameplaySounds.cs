@@ -14,20 +14,18 @@ namespace CardMatching.Gameplay
 
         private void OnEnable()
         {
-            UIEvents.FlippingCard += PlayFlippingCardSound;
-
-            GameEvents.MatchingCard += PlayMatchingCardSound;
-            GameEvents.MismatchingCard += PlayMismatchingCardSound;
-            GameEvents.GameOver += PlayGameOverSound;
+            GameEvents.FlippingCard += GameEvents_FlippingCard;
+            GameEvents.MatchingCard += GameEvents_MatchingCard;
+            GameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            GameEvents.GameOver += GameEvents_GameOver;
         }
 
         private void OnDisable()
         {
-            UIEvents.FlippingCard -= PlayFlippingCardSound;
-
-            GameEvents.MatchingCard -= PlayMatchingCardSound;
-            GameEvents.MismatchingCard -= PlayMismatchingCardSound;
-            GameEvents.GameOver -= PlayGameOverSound;
+            GameEvents.FlippingCard -= GameEvents_FlippingCard;
+            GameEvents.MatchingCard -= GameEvents_MatchingCard;
+            GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+            GameEvents.GameOver -= GameEvents_GameOver;
         }
 
         private void Start()
@@ -38,25 +36,25 @@ namespace CardMatching.Gameplay
 
 
         // Play the flipping card sound effect
-        private void PlayFlippingCardSound()
+        private void GameEvents_FlippingCard(int indexNo)
         {
             _audioManager.PlaySFX(_audioManager.AudioSettingsData.FlippingCardSound);
         }
 
         // Play the matching card sound effect
-        private void PlayMatchingCardSound()
+        private void GameEvents_MatchingCard()
         {
             _audioManager.PlaySFX(_audioManager.AudioSettingsData.MatchingCardSound);
         }
 
         // Play the mismatching card sound effect
-        private void PlayMismatchingCardSound()
+        private void GameEvents_MismatchingCard()
         {
             _audioManager.PlaySFX(_audioManager.AudioSettingsData.MismatchingCardSound);
         }
 
         // Play the game over sound effect
-        private void PlayGameOverSound()
+        private void GameEvents_GameOver()
         {
             _audioManager.PlaySFX(_audioManager.AudioSettingsData.GameOverSound);
         }

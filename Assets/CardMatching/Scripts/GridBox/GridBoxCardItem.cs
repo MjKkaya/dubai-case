@@ -132,7 +132,7 @@ namespace CardMatching.GridBox
             Debug.Log("GridBoxCardItem-OnPointerClick");
             StartFlipAniamtion();
             _onPointerClick?.Invoke(eventData);
-            UIEvents.FlippingCard?.Invoke();
+            GameEvents.FlippingCard?.Invoke(_gridBoxCardData.CardIconIndex);
         }
     }
 }

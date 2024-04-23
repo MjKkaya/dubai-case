@@ -5,6 +5,6 @@ namespace CardMatching.Events
 {
     public static class UIEvents
     {
-        public static Action FlippingCard;
+        //public static Action FlippingCard;
     }
 }
