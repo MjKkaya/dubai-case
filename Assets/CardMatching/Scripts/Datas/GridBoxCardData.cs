@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 
@@ -29,6 +30,19 @@ namespace CardMatching.Datas
             set
             {
                 _cardIcon = value;
+            }
+        }
+
+        public Sprite _coverImage;
+        public Sprite CoverImage
+        {
+            get
+            {
+                return _coverImage;
+            }
+            set
+            {
+                _coverImage = value;
             }
         }
     }

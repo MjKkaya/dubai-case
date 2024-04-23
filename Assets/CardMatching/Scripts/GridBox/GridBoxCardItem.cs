@@ -1,5 +1,7 @@
 using CardMatching.Datas;
 using CardMatching.Events;
+using CardMatching.ScriptableObjects;
+using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -46,31 +48,23 @@ namespace CardMatching.GridBox
         }
 
 
-        [SerializeField] private Image _coverImage;
-        [SerializeField] private Image _iconImage;
+        [SerializeField] private Image _displayImage;
 
-        private bool isOpen;
+        private bool _isOpen = false;
 
-
-        void Start()
-        {
-            isOpen = false;
-            FlipCard(false);
-        }
 
         public void Init(GridBoxCardData gridBoxCardData, GridLocation gridLocation, Action<PointerEventData> onPointerClick)
         {
             _gridBoxCardData = gridBoxCardData;
             _onPointerClick = onPointerClick;
             GridLocation = gridLocation;
+            SetDisplayImageSprite();
         }
-
-        
 
         public void ReloadCard()
         {
-            isOpen = false;
-            FlipCard(false);
+            _isOpen = false;
+            SetDisplayImageSprite();
         }
 
         public void SetActive(bool isActive)
@@ -80,16 +74,15 @@ namespace CardMatching.GridBox
         }
 
 
-        private void FlipCard(bool isOpen)
+        private void SetDisplayImageSprite()
         {
-            _coverImage.gameObject.SetActive(!isOpen);
-            _iconImage.gameObject.SetActive(isOpen);
+            _displayImage.sprite = _isOpen ? _gridBoxCardData.CardIcon: _gridBoxCardData.CoverImage;
         }
 
-        private void FlipCardWithAnimation(bool isOpen)
-        {
-            FlipCard(isOpen);
-        }
+        //private void FlipCardWithAnimation(bool isOpen)
+        //{
+        //    FlipCard(isOpen);
+        //}
 
         private void SetName()
         {
@@ -97,11 +90,34 @@ namespace CardMatching.GridBox
         }
 
 
+        #region Flipping Animation
+
+        public void StartFlipAniamtion()
+        {
+            Debug.Log($"StartFlipAniamtion-_isOpen: {_isOpen}");
+            transform.transform.DOScaleX(0.0f, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase).OnComplete(FlipAnimationSecondStep);
+        }
+
+        private void FlipAnimationSecondStep()
+        {
+            _isOpen = !_isOpen;
+            SetDisplayImageSprite();
+            transform.transform.DOScaleX(1.0f, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase).OnComplete(OnCompletedFlipAniamton);
+        }
+
+        private void OnCompletedFlipAniamton()
+        {
+            //m_IsOpen = !m_IsOpen;
+            Debug.Log($"OnCompletedFlipAniamton-m_IsOpen: {_isOpen}");
+        }
+
+        #endregion
+
+
         public void OnPointerClick(PointerEventData eventData)
         {
             Debug.Log("GridBoxCardItem-OnPointerClick");
-            isOpen =! isOpen;
-            FlipCard(isOpen);
+            StartFlipAniamtion();
             _onPointerClick?.Invoke(eventData);
             UIEvents.FlippingCard?.Invoke();
         }

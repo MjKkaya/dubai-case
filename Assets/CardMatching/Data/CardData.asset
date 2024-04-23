@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2323dfdfc5fb94db5aa48e4fd073d26f, type: 3}
   m_Name: CardData
   m_EditorClassIdentifier: 
+  _cardCoverSprite: {fileID: 21300000, guid: f2b376ffc2f4d4931ae2df5eeb7f6413, type: 3}
   _cardIconList:
   - {fileID: 21300000, guid: f276efc2b17674b0e80f3b5d49b0563b, type: 3}
   - {fileID: 21300000, guid: ebba94e8a4c584581b6de9a785355c45, type: 3}
