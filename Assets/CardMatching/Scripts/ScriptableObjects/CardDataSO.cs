@@ -12,7 +12,7 @@ namespace CardMatching.ScriptableObjects
         public static CardDataSO _instance;
         public static CardDataSO Instance => _instance;
 
-        public float FlipAniamtionTime = 0.5f;
+        public float FlipAniamtionTime = 0.25f;
         public Ease FlipAnimationEase = Ease.OutCubic;
 
         [SerializeField] private Sprite _cardCoverSprite;

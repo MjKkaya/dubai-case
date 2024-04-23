@@ -27,10 +27,6 @@ namespace CardMatching.Datas
             {
                 return _cardIcon;
             }
-            set
-            {
-                _cardIcon = value;
-            }
         }
 
         public Sprite _coverImage;
@@ -40,20 +36,23 @@ namespace CardMatching.Datas
             {
                 return _coverImage;
             }
-            set
-            {
-                _coverImage = value;
-            }
+        }
+
+        public GridBoxCardData(int cardIconIndex, Sprite cardIcon, Sprite coverImage)
+        {
+            _cardIconIndex = cardIconIndex;
+            _cardIcon = cardIcon;
+            _coverImage = coverImage;
         }
     }
 
-    public struct GridLocation
+    public struct GridDimension
     {
         public int X { get; private set; }
         public int Y { get; private set; }
 
 
-        public GridLocation(int x, int y)
+        public GridDimension(int x, int y)
         {
             X = x;
             Y = y;
@@ -63,11 +62,6 @@ namespace CardMatching.Datas
         {
             X = x;
             Y = y;
-        }
-
-        public GridLocation CreateAndAdd(int x, int y)
-        {
-            return new GridLocation(X + x, Y + y);
         }
 
         public override string ToString() => $"({X}, {Y})";

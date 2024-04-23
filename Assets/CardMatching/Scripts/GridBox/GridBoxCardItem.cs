@@ -12,7 +12,7 @@ namespace CardMatching.GridBox
 {
     public class GridBoxCardItem : MonoBehaviour, IPointerClickHandler
     {
-        public Action<GridBoxCardItem> Disappeared;
+        //public Action<GridBoxCardItem> Disappeared;
         private Action<PointerEventData> _onPointerClick;
 
 
@@ -33,8 +33,8 @@ namespace CardMatching.GridBox
             }
         }
 
-        private GridLocation mGridLocation;
-        public GridLocation GridLocation
+        private GridDimension mGridLocation;
+        public GridDimension GridLocation
         {
             get
             {
@@ -47,13 +47,25 @@ namespace CardMatching.GridBox
             }
         }
 
+        private RectTransform mRectTransform;
+        public RectTransform RectTransform
+        {
+            get
+            {
+                if (mRectTransform == null)
+                    mRectTransform = GetComponent<RectTransform>();
+
+                return mRectTransform;
+            }
+        }
+
 
         [SerializeField] private Image _displayImage;
 
         private bool _isOpen = false;
 
 
-        public void Init(GridBoxCardData gridBoxCardData, GridLocation gridLocation, Action<PointerEventData> onPointerClick)
+        public void Init(GridBoxCardData gridBoxCardData, GridDimension gridLocation, Action<PointerEventData> onPointerClick)
         {
             _gridBoxCardData = gridBoxCardData;
             _onPointerClick = onPointerClick;
@@ -77,6 +89,7 @@ namespace CardMatching.GridBox
         private void SetDisplayImageSprite()
         {
             _displayImage.sprite = _isOpen ? _gridBoxCardData.CardIcon: _gridBoxCardData.CoverImage;
+            _displayImage.preserveAspect = _isOpen;
         }
 
         //private void FlipCardWithAnimation(bool isOpen)
@@ -86,7 +99,7 @@ namespace CardMatching.GridBox
 
         private void SetName()
         {
-            name = $"GridBoxItem_{GridLocation.X}_{GridLocation.Y}";
+            name = $"GridBoxItem_{GridLocation.Y}_{GridLocation.X}";
         }
 
 
