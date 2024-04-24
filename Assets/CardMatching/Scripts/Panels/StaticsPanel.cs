@@ -1,12 +1,14 @@
 using CardMatching.Events;
 using UnityEngine;
 using TMPro;
-using System;
+
 
 namespace CardMatching.Panels
 {
     public class StaticsPanel : MonoBehaviour
     {
+        private const string _defaultText = "0";
+
         private int _matchesCount;
         private int _turnsCount;
 
@@ -16,25 +18,32 @@ namespace CardMatching.Panels
 
         private void OnEnable()
         {
+            GameEvents.GameStarting += GameEvents_GameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
         }
 
         private void OnDisable()
         {
+            GameEvents.GameStarting -= GameEvents_GameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
         }
 
 
-        private void ResetTexts()
+        private void ResetDataAndText()
         {
             _matchesCount = 0;
             _turnsCount = 0;
-            _matchesText.text = string.Empty;
-            _turnsText.text = string.Empty;
+            _matchesText.text = _defaultText;
+            _turnsText.text = _defaultText;
         }
 
+
+        private void GameEvents_GameStarting()
+        {
+            ResetDataAndText();
+        }
 
         private void GameEvents_MismatchingCard()
         {

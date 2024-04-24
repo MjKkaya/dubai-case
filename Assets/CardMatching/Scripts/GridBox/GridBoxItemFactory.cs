@@ -1,9 +1,7 @@
 using CardMatching.Datas;
 using CardMatching.ScriptableObjects;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
 
@@ -14,7 +12,6 @@ namespace CardMatching.GridBox
     {
         [SerializeField] private CardDataSO _cardDataSO;
         [SerializeField] private GridBoxCardItem _prefabGridBoxCardItem;
-
 
         private ObjectPool<GridBoxCardItem> mGridBoxItemObjectPool;
 
@@ -43,14 +40,14 @@ namespace CardMatching.GridBox
         // Called when an item is taken from the pool using Get
         void OnTakeFromPool(GridBoxCardItem cardItem)
         {
-            Debug.Log($"{this}-OnTakeFromPool-CardIconIndex:{cardItem.CardIconIndex}");
+            Debug.Log($"{this}-OnTakeFromPool-cardItem:{cardItem.name}");
             cardItem.SetActive(true);
         }
 
         // Called when an item is returned to the pool using Release
         void OnReturnedToPool(GridBoxCardItem cardItem)
         {
-            Debug.Log($"{this}-OnReturnedToPool-CardIconIndex:{cardItem.CardIconIndex}");
+            Debug.Log($"{this}-OnReturnedToPool-cardItem:{cardItem.name}");
             cardItem.SetActive(false);
         }
 
@@ -58,7 +55,7 @@ namespace CardMatching.GridBox
         // We can control what the destroy behavior does, here we destroy the GameObject.
         void OnDestroyPoolObject(GridBoxCardItem cardItem)
         {
-            Debug.Log($"{this}-OnDestroyPoolObject-CardIconIndex:{cardItem.CardIconIndex}");
+            Debug.Log($"{this}-OnDestroyPoolObject-cardItem:{cardItem.name}");
             Destroy(cardItem.gameObject);
         }
 

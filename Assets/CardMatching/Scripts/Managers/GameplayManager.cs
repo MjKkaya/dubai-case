@@ -12,6 +12,7 @@ namespace CardMatching.Managers
         private int _firstSelectedCardIconIndex;
         private int _secondSelectedCardIconIndex;
 
+        private int _pairCount;
         private int _matchesCount;
         private int _turnsCount;
 
@@ -20,11 +21,13 @@ namespace CardMatching.Managers
         {
             ResetOpenedIndexs();
             GameEvents.CardSelected += GameEvents_CardSelected;
+            GameEvents.GameStarted += GameEvents_GameStarted;
         }
 
         private void OnDisable()
         {
             GameEvents.CardSelected -= GameEvents_CardSelected;
+            GameEvents.GameStarted -= GameEvents_GameStarted;
         }
 
 
@@ -33,14 +36,24 @@ namespace CardMatching.Managers
             Debug.Log($"{this}-CheckSelectedCardResult-selectedIndex:{_firstSelectedCardIconIndex}/{_secondSelectedCardIconIndex}");
             if(_firstSelectedCardIconIndex == _secondSelectedCardIconIndex)
             {
-                _matchesCount = 0;
                 GameEvents.MatchingCard?.Invoke();
+                Invoke(nameof(CheckGameOver), 1f);
             }
             else
                 GameEvents.MismatchingCard?.Invoke();
 
             _turnsCount++;
             ResetOpenedIndexs();
+        }
+
+        private void CheckGameOver()
+        {
+            _matchesCount++;
+            if (_matchesCount == _pairCount)
+            {
+                GameEvents.GameOver?.Invoke();
+                ResetGameStats();
+            }
         }
 
         private void ResetOpenedIndexs()
@@ -62,9 +75,7 @@ namespace CardMatching.Managers
             else
                 _secondSelectedCardIconIndex = openedCardIconIndex;
         }
-        
 
-        //private void GameEvents_CardSelected(int openedCardIconIndex, GridDimension gridDimension)
         private void GameEvents_CardSelected(GridBoxCardItem gridBoxCardItem)
         {
             SetSelectedCardIconIndexs(gridBoxCardItem.CardIconIndex);
@@ -73,6 +84,11 @@ namespace CardMatching.Managers
                 GameEvents.StartedCardMatchingControl?.Invoke();
                 Invoke(nameof(CheckSelectedCardResult), 1f);
             }
+        }
+
+        private void GameEvents_GameStarted(int pairCount)
+        {
+            _pairCount = pairCount;
         }
     }
 }

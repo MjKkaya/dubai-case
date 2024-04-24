@@ -1,4 +1,3 @@
-using CardMatching.Datas;
 using CardMatching.Events;
 using CardMatching.Managers;
 using UnityEngine;

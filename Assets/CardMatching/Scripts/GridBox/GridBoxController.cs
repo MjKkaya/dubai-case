@@ -11,6 +11,9 @@ namespace CardMatching.GridBox
     [RequireComponent(typeof(GridBoxItemFactory))]
     public class GridBoxController : MonoBehaviour
     {
+        private const int _minDimentionValue = 2;
+        private const int _maxnDimentionValue = 6;
+
         [SerializeField] private GridBoxItemFactory _gridBoxFactory;
         [SerializeField] private RectTransform _cardItemContainer;
 
@@ -20,14 +23,12 @@ namespace CardMatching.GridBox
 
         private GridDimension _currentLevelGridAreaDimension;
 
+        private WaitForSeconds _waitForFirstTimeCardShowing = new (1f);
 
-        private void Start()
-        {
-            CreateLevel(new GridDimension(2, 4));
-        }
 
         private void OnEnable()
         {
+            GameEvents.GameStarting+= GameEvents_GameStarting;
             GameEvents.CardSelected += GameEvents_CardSelected;
             GameEvents.StartedCardMatchingControl += GameEvents_StartedCardMatchingControl;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
@@ -36,6 +37,7 @@ namespace CardMatching.GridBox
 
         private void OnDisable()
         {
+            GameEvents.GameStarting -= GameEvents_GameStarting;
             GameEvents.CardSelected -= GameEvents_CardSelected;
             GameEvents.StartedCardMatchingControl -= GameEvents_StartedCardMatchingControl;
             GameEvents.MatchingCard -= GameEvents_MatchingCard;
@@ -43,18 +45,38 @@ namespace CardMatching.GridBox
         }
 
 
-        public void CreateLevel(GridDimension gridAreaDimension)
+        public void CreateLevel()
         {
-            _currentLevelGridAreaDimension = gridAreaDimension;
+            _currentLevelGridAreaDimension = CreateRandomGridDimension();
             if (_coroutineCreateLevel != null)
                 StopCoroutine(_coroutineCreateLevel);
             _coroutineCreateLevel = StartCoroutine(ICreateLevel());
+        }
+
+        private GridDimension CreateRandomGridDimension()
+        {
+            int sideX = Random.Range(_minDimentionValue, _maxnDimentionValue);
+            int sideY = Random.Range(_minDimentionValue, _maxnDimentionValue);
+
+            //prevent odd number of total cards
+            if (sideX%2 != 0 && sideY % 2 != 0)
+            {
+                if (sideX % 2 != 0)
+                    sideX--;
+                else
+                    sideY--;
+            }
+
+            return new GridDimension(sideX, sideY);
         }
 
         IEnumerator ICreateLevel()
         {
             CreateGridBoxItems();
             yield return null;
+            int pairCount = _currentLevelGridAreaDimension.X * _currentLevelGridAreaDimension.Y / 2;
+            GameEvents.GameStarted?.Invoke(pairCount);
+            StartCoroutine(ShowAllCardforShortTime());
         }
         
         private void CreateGridBoxItems()
@@ -94,6 +116,35 @@ namespace CardMatching.GridBox
 
                     Debug.Log($"{this}-indexNo:{indexNo}, data:{_cardDataList[indexNo]}, name:{gridBoxCardItem.name}");
                     indexNo++;
+                }
+            }
+        }
+
+        IEnumerator ShowAllCardforShortTime()
+        {
+            GridBoxCardItem gridBoxItem;
+            for (int y = 0; y < _currentLevelGridAreaDimension.Y; y++)
+            {
+                for (int x = 0; x < _currentLevelGridAreaDimension.X; x++)
+                {
+                    gridBoxItem = _gridBoxCardItems[y, x];
+                    if (gridBoxItem != null && gridBoxItem.gameObject.activeInHierarchy)
+                        gridBoxItem.SetDisplayImageSprite(true);
+                }
+            }
+
+            yield return _waitForFirstTimeCardShowing;
+
+            for (int y = 0; y < _currentLevelGridAreaDimension.Y; y++)
+            {
+                for (int x = 0; x < _currentLevelGridAreaDimension.X; x++)
+                {
+                    gridBoxItem = _gridBoxCardItems[y, x];
+                    if (gridBoxItem != null && gridBoxItem.gameObject.activeInHierarchy)
+                    {
+                        gridBoxItem.SetDisplayImageSprite(false);
+                        gridBoxItem.SetInteractible(true);
+                    }
                 }
             }
         }
@@ -165,6 +216,10 @@ namespace CardMatching.GridBox
             _selectedCardItems.Clear();
         }
 
+        private void GameEvents_GameStarting()
+        {
+            CreateLevel();
+        }
 
         private void GameEvents_CardSelected(GridBoxCardItem selectedCardItem)
         {

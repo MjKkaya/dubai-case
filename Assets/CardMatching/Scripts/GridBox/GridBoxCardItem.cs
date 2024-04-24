@@ -58,7 +58,7 @@ namespace CardMatching.GridBox
         [SerializeField] private int _cardIconIndex;
         [SerializeField] private Image _displayImage;
         private Image _raycatsTargetImage;
-        private bool _isOpen = false;
+        private bool _isOpen;
 
 
         private void Awake()
@@ -72,12 +72,8 @@ namespace CardMatching.GridBox
             _cardIconIndex = gridBoxCardData.CardIconIndex;
             _gridBoxCardData = gridBoxCardData;
             GridLocation = gridLocation;
-            SetDisplayImageSprite();
-        }
-
-        public void ReloadCard()
-        {
             _isOpen = false;
+            SetInteractible(false);
             SetDisplayImageSprite();
         }
 
@@ -92,10 +88,16 @@ namespace CardMatching.GridBox
         }
 
 
-        private void SetDisplayImageSprite()
+        public void SetDisplayImageSprite()
         {
             _displayImage.sprite = _isOpen ? _gridBoxCardData.CardIcon: _gridBoxCardData.CoverImage;
             _displayImage.preserveAspect = _isOpen;
+        }
+
+        public void SetDisplayImageSprite(bool isOpen)
+        {
+            _displayImage.sprite = isOpen ? _gridBoxCardData.CardIcon : _gridBoxCardData.CoverImage;
+            _displayImage.preserveAspect = isOpen;
         }
 
         private void SetName()
@@ -124,7 +126,6 @@ namespace CardMatching.GridBox
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Debug.Log("Mj------");
             SetInteractible(false);
             GameEvents.CardSelected?.Invoke(this);
         }
