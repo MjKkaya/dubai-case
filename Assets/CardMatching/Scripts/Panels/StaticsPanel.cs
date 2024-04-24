@@ -7,13 +7,39 @@ namespace CardMatching.Panels
 {
     public class StaticsPanel : MonoBehaviour
     {
-        private const string _defaultText = "0";
+        private float _currentScore;
+        private float CurrentScore
+        {
+            set
+            {
+                _currentScore = value;
+                _scoreText.text = _currentScore.ToString();
+            }
+        }
 
         private int _matchesCount;
+        private int MatchesCount
+        {
+            set
+            {
+                _matchesCount = value;
+                _matchesText.text = _matchesCount.ToString();
+            }
+        }
+
         private int _turnsCount;
+        private int TurnsCount
+        {
+            set
+            {
+                _turnsCount = value;
+                _turnsText.text = _turnsCount.ToString();
+            }
+        }
 
         [SerializeField] private TextMeshProUGUI _matchesText;
         [SerializeField] private TextMeshProUGUI _turnsText;
+        [SerializeField] private TextMeshProUGUI _scoreText;
 
 
         private void OnEnable()
@@ -21,6 +47,8 @@ namespace CardMatching.Panels
             GameEvents.GameStarting += GameEvents_GameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            GameEvents.EarnedPoint += GameEvents_EarnedPoint;
+            GameEvents.EarnedComboPoint += GameEvents_EarnedComboPoint;
         }
 
         private void OnDisable()
@@ -28,15 +56,16 @@ namespace CardMatching.Panels
             GameEvents.GameStarting -= GameEvents_GameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            GameEvents.EarnedPoint -= GameEvents_EarnedPoint;
+            GameEvents.EarnedComboPoint -= GameEvents_EarnedComboPoint;
         }
 
 
         private void ResetDataAndText()
         {
-            _matchesCount = 0;
-            _turnsCount = 0;
-            _matchesText.text = _defaultText;
-            _turnsText.text = _defaultText;
+            MatchesCount = 0;
+            TurnsCount = 0;
+            CurrentScore = 0;
         }
 
 
@@ -47,16 +76,23 @@ namespace CardMatching.Panels
 
         private void GameEvents_MismatchingCard()
         {
-            _turnsCount++;
-            _turnsText.text = _turnsCount.ToString();
+            TurnsCount = ++_turnsCount;
         }
 
         private void GameEvents_MatchingCard()
         {
-            _matchesCount++;
-            _turnsCount++;
-            _matchesText.text = _matchesCount.ToString();
-            _turnsText.text = _turnsCount.ToString();
+            MatchesCount = ++_matchesCount;
+            TurnsCount = ++_turnsCount;
+        }
+
+        private void GameEvents_EarnedPoint(float point)
+        {
+            CurrentScore = _currentScore + point;
+        }
+
+        private void GameEvents_EarnedComboPoint(float point)
+        {
+            CurrentScore = _currentScore + point;
         }
     }
 }

@@ -17,5 +17,8 @@ namespace CardMatching.Events
         public static Action MatchingCard;
         public static Action MismatchingCard;
         public static Action GameOver;
+
+        public static Action<float> EarnedPoint;
+        public static Action<float> EarnedComboPoint;
     }
 }
