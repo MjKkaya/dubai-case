@@ -2,7 +2,6 @@ using CardMatching.Datas;
 using CardMatching.Events;
 using CardMatching.ScriptableObjects;
 using DG.Tweening;
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,10 +11,6 @@ namespace CardMatching.GridBox
 {
     public class GridBoxCardItem : MonoBehaviour, IPointerClickHandler
     {
-        //public Action<GridBoxCardItem> Disappeared;
-        private Action<PointerEventData> _onPointerClick;
-
-
         private GridBoxCardData _gridBoxCardData;
         public GridBoxCardData GridBoxData
         {
@@ -33,16 +28,16 @@ namespace CardMatching.GridBox
             }
         }
 
-        private GridDimension mGridLocation;
+        private GridDimension _gridLocation;
         public GridDimension GridLocation
         {
             get
             {
-                return mGridLocation;
+                return _gridLocation;
             }
             set
             {
-                mGridLocation = value;
+                _gridLocation = value;
                 SetName();
             }
         }
@@ -59,16 +54,23 @@ namespace CardMatching.GridBox
             }
         }
 
-
+        // for test - displaying in the inspector.
+        [SerializeField] private int _cardIconIndex;
         [SerializeField] private Image _displayImage;
-
+        private Image _raycatsTargetImage;
         private bool _isOpen = false;
 
 
-        public void Init(GridBoxCardData gridBoxCardData, GridDimension gridLocation, Action<PointerEventData> onPointerClick)
+        private void Awake()
         {
+            _raycatsTargetImage = GetComponent<Image>();
+        }
+
+
+        public void Init(GridBoxCardData gridBoxCardData, GridDimension gridLocation)
+        {
+            _cardIconIndex = gridBoxCardData.CardIconIndex;
             _gridBoxCardData = gridBoxCardData;
-            _onPointerClick = onPointerClick;
             GridLocation = gridLocation;
             SetDisplayImageSprite();
         }
@@ -82,7 +84,11 @@ namespace CardMatching.GridBox
         public void SetActive(bool isActive)
         {
             gameObject.SetActive(isActive);
-            _onPointerClick = null;
+        }
+
+        public void SetInteractible(bool isActive)
+        {
+            _raycatsTargetImage.raycastTarget = isActive;
         }
 
 
@@ -91,11 +97,6 @@ namespace CardMatching.GridBox
             _displayImage.sprite = _isOpen ? _gridBoxCardData.CardIcon: _gridBoxCardData.CoverImage;
             _displayImage.preserveAspect = _isOpen;
         }
-
-        //private void FlipCardWithAnimation(bool isOpen)
-        //{
-        //    FlipCard(isOpen);
-        //}
 
         private void SetName()
         {
@@ -115,13 +116,7 @@ namespace CardMatching.GridBox
         {
             _isOpen = !_isOpen;
             SetDisplayImageSprite();
-            transform.transform.DOScaleX(1.0f, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase).OnComplete(OnCompletedFlipAniamton);
-        }
-
-        private void OnCompletedFlipAniamton()
-        {
-            //m_IsOpen = !m_IsOpen;
-            Debug.Log($"OnCompletedFlipAniamton-m_IsOpen: {_isOpen}");
+            transform.transform.DOScaleX(1.0f, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase);
         }
 
         #endregion
@@ -129,10 +124,9 @@ namespace CardMatching.GridBox
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Debug.Log("GridBoxCardItem-OnPointerClick");
-            StartFlipAniamtion();
-            _onPointerClick?.Invoke(eventData);
-            GameEvents.FlippingCard?.Invoke(_gridBoxCardData.CardIconIndex);
+            Debug.Log("Mj------");
+            SetInteractible(false);
+            GameEvents.CardSelected?.Invoke(this);
         }
     }
 }

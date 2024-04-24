@@ -63,10 +63,10 @@ namespace CardMatching.GridBox
         }
 
 
-        public GridBoxCardItem GetGridBoxItem(GridBoxCardData gridBoxData, GridDimension gridLocation, Action<PointerEventData> onPointerClick)
+        public GridBoxCardItem GetGridBoxItem(GridBoxCardData gridBoxData, GridDimension gridLocation)
         {
             GridBoxCardItem gridBoxItem = mGridBoxItemObjectPool.Get();
-            gridBoxItem.Init(gridBoxData, gridLocation, onPointerClick);
+            gridBoxItem.Init(gridBoxData, gridLocation);
             //gridBoxItem.Disappeared = GridBoxItem_Disappeared;
             return gridBoxItem;
         }

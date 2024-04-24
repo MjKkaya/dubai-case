@@ -1,4 +1,5 @@
 using CardMatching.Events;
+using CardMatching.GridBox;
 using UnityEngine;
 
 
@@ -18,12 +19,12 @@ namespace CardMatching.Managers
         private void OnEnable()
         {
             ResetOpenedIndexs();
-            GameEvents.FlippingCard += GameEvents_FlippingCard;
+            GameEvents.CardSelected += GameEvents_CardSelected;
         }
 
         private void OnDisable()
         {
-            GameEvents.FlippingCard -= GameEvents_FlippingCard;
+            GameEvents.CardSelected -= GameEvents_CardSelected;
         }
 
 
@@ -42,7 +43,6 @@ namespace CardMatching.Managers
             ResetOpenedIndexs();
         }
 
-
         private void ResetOpenedIndexs()
         {
             _firstSelectedCardIconIndex = _emptyIndexNumber;
@@ -55,7 +55,6 @@ namespace CardMatching.Managers
             _turnsCount = 0;
         }
 
-
         private void SetSelectedCardIconIndexs(int openedCardIconIndex)
         {
             if (_firstSelectedCardIconIndex == _emptyIndexNumber)
@@ -63,14 +62,17 @@ namespace CardMatching.Managers
             else
                 _secondSelectedCardIconIndex = openedCardIconIndex;
         }
-
         
 
-        private void GameEvents_FlippingCard(int openedCardIconIndex)
+        //private void GameEvents_CardSelected(int openedCardIconIndex, GridDimension gridDimension)
+        private void GameEvents_CardSelected(GridBoxCardItem gridBoxCardItem)
         {
-            SetSelectedCardIconIndexs(openedCardIconIndex);
+            SetSelectedCardIconIndexs(gridBoxCardItem.CardIconIndex);
             if (_secondSelectedCardIconIndex != _emptyIndexNumber)
+            {
+                GameEvents.StartedCardMatchingControl?.Invoke();
                 Invoke(nameof(CheckSelectedCardResult), 1f);
+            }
         }
     }
 }
