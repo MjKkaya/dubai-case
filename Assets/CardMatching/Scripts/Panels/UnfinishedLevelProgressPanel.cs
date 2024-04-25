@@ -8,6 +8,7 @@ namespace CardMatching.Panels
 {
     public class UnfinishedLevelProgressPanel : BasePanel
     {
+        [HideInInspector]
         public CurrentGameDataSO CurrentGameData;
 
 
@@ -44,7 +45,6 @@ namespace CardMatching.Panels
         private void OnClickedNewGameButton()
         {
             GameEvents.GameStarting?.Invoke();
-            //UIEvents.BeginningPanelShow?.Invoke();
             HidePanel();
         }
     }

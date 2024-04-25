@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cd7f5b5342ce45e2add01bc8cdb08d5, type: 3}
   m_Name: CurrentGameDataSO
   m_EditorClassIdentifier: 
+  IconIndexArray: 
   PairCount: 0
-  GridAreaXDimension: 0
-  GridAreaYDimension: 0
+  GridAreaDimensionX: 0
+  GridAreaDimensionY: 0
   Score: 0
-  Matches: 0
-  Turns: 0
+  IsComboActive: 0
+  MatchesCount: 0
+  TurnCount: 0
