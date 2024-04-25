@@ -40,10 +40,9 @@ namespace CardMatching.Managers
         {
             _currentStreak++;
             GameEvents.EarnedPoint?.Invoke(_correctAnswerPoint);
+
             if(_currentStreak > _minimumStreak)
-            {
                 GameEvents.EarnedComboPoint?.Invoke(_comboPoint);
-            }
         }
 
         private void GameEvents_MismatchingCard()

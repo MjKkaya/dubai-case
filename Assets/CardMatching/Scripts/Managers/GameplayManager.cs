@@ -1,5 +1,6 @@
 using CardMatching.Events;
 using CardMatching.GridBox;
+using CardMatching.ScriptableObjects;
 using UnityEngine;
 
 
@@ -9,25 +10,21 @@ namespace CardMatching.Managers
     {
         private const int _emptyIndexNumber = -1;
 
+        [SerializeField] private CurrentGameDataSO currentGameData;
+
         private int _firstSelectedCardIconIndex;
         private int _secondSelectedCardIconIndex;
-
-        private int _pairCount;
-        private int _matchesCount;
-        private int _turnsCount;
 
 
         private void OnEnable()
         {
             ResetOpenedIndexs();
             GameEvents.CardSelected += GameEvents_CardSelected;
-            GameEvents.GameStarted += GameEvents_GameStarted;
         }
 
         private void OnDisable()
         {
             GameEvents.CardSelected -= GameEvents_CardSelected;
-            GameEvents.GameStarted -= GameEvents_GameStarted;
         }
 
 
@@ -37,35 +34,25 @@ namespace CardMatching.Managers
             if(_firstSelectedCardIconIndex == _secondSelectedCardIconIndex)
             {
                 GameEvents.MatchingCard?.Invoke();
-                Invoke(nameof(CheckGameOver), 1f);
+                Invoke(nameof(CheckGameOver), 0.5f);
+
             }
             else
                 GameEvents.MismatchingCard?.Invoke();
 
-            _turnsCount++;
             ResetOpenedIndexs();
         }
 
         private void CheckGameOver()
         {
-            _matchesCount++;
-            if (_matchesCount == _pairCount)
-            {
+            if (currentGameData.MatchesCount == currentGameData.PairCount)
                 GameEvents.GameOver?.Invoke();
-                ResetGameStats();
-            }
         }
 
         private void ResetOpenedIndexs()
         {
             _firstSelectedCardIconIndex = _emptyIndexNumber;
             _secondSelectedCardIconIndex = _emptyIndexNumber;
-        }
-
-        private void ResetGameStats()
-        {
-            _matchesCount = 0;
-            _turnsCount = 0;
         }
 
         private void SetSelectedCardIconIndexs(int openedCardIconIndex)
@@ -82,13 +69,8 @@ namespace CardMatching.Managers
             if (_secondSelectedCardIconIndex != _emptyIndexNumber)
             {
                 GameEvents.StartedCardMatchingControl?.Invoke();
-                Invoke(nameof(CheckSelectedCardResult), 1f);
+                Invoke(nameof(CheckSelectedCardResult), 0.75f);
             }
-        }
-
-        private void GameEvents_GameStarted(int pairCount)
-        {
-            _pairCount = pairCount;
         }
     }
 }

@@ -133,5 +133,24 @@ namespace CardMatching.GridBox
 
             return gridBoxCardDatas;
         }
+
+
+        public GridBoxCardData[] CreateCardDataListWithCurrentData(int[] iconIndexArray)
+        {
+            int iconIndexArrayLength = iconIndexArray.Length;
+            GridBoxCardData[] gridBoxCardDatas = new GridBoxCardData[iconIndexArrayLength];
+
+            int iconIndex;
+            for (int i = 0; i < iconIndexArrayLength; i++)
+            {
+                iconIndex = iconIndexArray[i];
+                if (iconIndex == CurrentGameDataSO.EmptyBoxIconIndex)
+                    gridBoxCardDatas[i] = new GridBoxCardData(iconIndex, null, null);
+                else
+                    gridBoxCardDatas[i] = new GridBoxCardData(iconIndex, _cardDataSO.CardIconList[iconIndex], _cardDataSO.CardCoverSprite);
+            }
+
+            return gridBoxCardDatas;
+        }
     }
 }

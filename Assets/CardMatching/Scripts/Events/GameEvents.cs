@@ -1,14 +1,19 @@
-using System;
+using CardMatching.Datas;
 using CardMatching.GridBox;
+using CardMatching.ScriptableObjects;
+using System;
 
 
 namespace CardMatching.Events
 {
     public static class GameEvents
     {
-        //It has to send paircount of the game.
+        //Prepare new game with unfinished game data;
+        public static Action<CurrentGameDataSO> StartGameWithUnfinishedGameData;
         public static Action GameStarting;
-        public static Action<int> GameStarted;
+
+        //It returns the grid are dimension.
+        public static Action<GridDimension, GridBoxCardItem[,]> GameStarted;
 
         //It's return selected card icon index number.
         public static Action<GridBoxCardItem> CardSelected;

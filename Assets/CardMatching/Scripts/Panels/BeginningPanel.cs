@@ -5,22 +5,21 @@ using UnityEngine.UI;
 
 namespace CardMatching.Panels
 {
-    [RequireComponent(typeof(CanvasGroup))]
-    public class BeginningPanel : MonoBehaviour
+    public class BeginningPanel : BasePanel
     {
         [SerializeField] private Button _playButton;
-        private CanvasGroup _canvasGroup;
 
 
-        private void Awake()
+        protected override void Awake()
         {
-            _canvasGroup = GetComponent<CanvasGroup>();
+            base.Awake();
             _playButton.onClick.AddListener(OnClickedPlayButton);
             GameEvents.GameOver += GameEvents_GameOver;
         }
 
         private void OnDestroy()
         {
+            _playButton.onClick.RemoveListener(OnClickedPlayButton);
             GameEvents.GameOver -= GameEvents_GameOver;
         }
 
@@ -29,19 +28,6 @@ namespace CardMatching.Panels
         {
             GameEvents.GameStarting?.Invoke();
             HidePanel();
-        }
-
-
-        private void HidePanel()
-        {
-            _canvasGroup.interactable = false;
-            _canvasGroup.alpha = 0;
-        }
-
-        private void ShowPanel()
-        {
-            _canvasGroup.interactable = true;
-            _canvasGroup.alpha = 1;
         }
 
         private void GameEvents_GameOver()

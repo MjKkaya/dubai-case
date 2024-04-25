@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 
 namespace CardMatching.Datas
 {
+    [SerializeField]
     public class GridBoxCardData
     {
         private int _cardIconIndex;
@@ -44,6 +46,7 @@ namespace CardMatching.Datas
             _coverImage = coverImage;
         }
     }
+
 
     public struct GridDimension
     {

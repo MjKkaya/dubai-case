@@ -1,7 +1,7 @@
 using CardMatching.Events;
 using UnityEngine;
 using TMPro;
-
+using CardMatching.ScriptableObjects;
 
 namespace CardMatching.Panels
 {
@@ -44,6 +44,7 @@ namespace CardMatching.Panels
 
         private void OnEnable()
         {
+            GameEvents.StartGameWithUnfinishedGameData += GameEvents_StartGameWithUnfinishedGameData;
             GameEvents.GameStarting += GameEvents_GameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
@@ -53,6 +54,7 @@ namespace CardMatching.Panels
 
         private void OnDisable()
         {
+            GameEvents.StartGameWithUnfinishedGameData -= GameEvents_StartGameWithUnfinishedGameData;
             GameEvents.GameStarting -= GameEvents_GameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
@@ -63,11 +65,18 @@ namespace CardMatching.Panels
 
         private void ResetDataAndText()
         {
+            CurrentScore = 0;
             MatchesCount = 0;
             TurnsCount = 0;
-            CurrentScore = 0;
         }
 
+
+        private void GameEvents_StartGameWithUnfinishedGameData(CurrentGameDataSO currentGameDataSO)
+        {
+            CurrentScore = currentGameDataSO.Score;
+            MatchesCount = currentGameDataSO.MatchesCount;
+            TurnsCount = currentGameDataSO.TurnCount;
+        }
 
         private void GameEvents_GameStarting()
         {
