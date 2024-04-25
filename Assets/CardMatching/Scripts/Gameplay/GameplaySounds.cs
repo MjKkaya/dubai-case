@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using CardMatching.Events;
+using CardMatching.GridBox;
 using CardMatching.Managers;
 using UnityEngine;
 
@@ -14,7 +16,7 @@ namespace CardMatching.Gameplay
 
         private void OnEnable()
         {
-            GameEvents.CardFlipped += CardFlipped;
+            GameEvents.CardSelected += GameEvents_CardSelected;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
             GameEvents.GameOver += GameEvents_GameOver;
@@ -22,7 +24,7 @@ namespace CardMatching.Gameplay
 
         private void OnDisable()
         {
-            GameEvents.CardFlipped -= CardFlipped;
+            GameEvents.CardSelected -= GameEvents_CardSelected;
             GameEvents.MatchingCard -= GameEvents_MatchingCard;
             GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
             GameEvents.GameOver -= GameEvents_GameOver;
@@ -36,19 +38,19 @@ namespace CardMatching.Gameplay
 
 
         // Play the flipping card sound effect
-        private void CardFlipped()
+        private void GameEvents_CardSelected()
         {
             _audioManager.PlaySFX(_audioManager.AudioSettingsData.FlippingCardSound);
         }
 
         // Play the matching card sound effect
-        private void GameEvents_MatchingCard()
+        private void GameEvents_MatchingCard(List<GridBoxCardItem> cardList)
         {
             _audioManager.PlaySFX(_audioManager.AudioSettingsData.MatchingCardSound);
         }
 
         // Play the mismatching card sound effect
-        private void GameEvents_MismatchingCard()
+        private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
         {
             _audioManager.PlaySFX(_audioManager.AudioSettingsData.MismatchingCardSound);
         }

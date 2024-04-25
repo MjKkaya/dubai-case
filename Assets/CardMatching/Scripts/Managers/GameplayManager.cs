@@ -1,76 +1,31 @@
 using CardMatching.Events;
+using CardMatching.Gameplay;
 using CardMatching.GridBox;
-using CardMatching.ScriptableObjects;
 using UnityEngine;
 
 
 namespace CardMatching.Managers
 {
+    [RequireComponent(typeof(SelectedCardsMatchController))]
     public class GameplayManager : MonoBehaviour
     {
-        private const int _emptyIndexNumber = -1;
-
-        [SerializeField] private CurrentGameDataSO currentGameData;
-
-        private int _firstSelectedCardIconIndex;
-        private int _secondSelectedCardIconIndex;
+        private SelectedCardsMatchController _SelectedCardsMatchController;
 
 
         private void OnEnable()
         {
-            ResetOpenedIndexs();
-            GameEvents.CardSelected += GameEvents_CardSelected;
+            _SelectedCardsMatchController = GetComponent<SelectedCardsMatchController>();
+            GameEvents.CardFlipped += GameEvents_CardFlipped;
         }
 
         private void OnDisable()
         {
-            GameEvents.CardSelected -= GameEvents_CardSelected;
+            GameEvents.CardFlipped -= GameEvents_CardFlipped;
         }
 
-
-        private void CheckSelectedCardResult()
+        private void GameEvents_CardFlipped(GridBoxCardItem gridBoxCardItem)
         {
-            Debug.Log($"{this}-CheckSelectedCardResult-selectedIndex:{_firstSelectedCardIconIndex}/{_secondSelectedCardIconIndex}");
-            if(_firstSelectedCardIconIndex == _secondSelectedCardIconIndex)
-            {
-                GameEvents.MatchingCard?.Invoke();
-                Invoke(nameof(CheckGameOver), 0.5f);
-
-            }
-            else
-                GameEvents.MismatchingCard?.Invoke();
-
-            ResetOpenedIndexs();
-        }
-
-        private void CheckGameOver()
-        {
-            if (currentGameData.MatchesCount == currentGameData.PairCount)
-                GameEvents.GameOver?.Invoke();
-        }
-
-        private void ResetOpenedIndexs()
-        {
-            _firstSelectedCardIconIndex = _emptyIndexNumber;
-            _secondSelectedCardIconIndex = _emptyIndexNumber;
-        }
-
-        private void SetSelectedCardIconIndexs(int openedCardIconIndex)
-        {
-            if (_firstSelectedCardIconIndex == _emptyIndexNumber)
-                _firstSelectedCardIconIndex = openedCardIconIndex;
-            else
-                _secondSelectedCardIconIndex = openedCardIconIndex;
-        }
-
-        private void GameEvents_CardSelected(GridBoxCardItem gridBoxCardItem)
-        {
-            SetSelectedCardIconIndexs(gridBoxCardItem.CardIconIndex);
-            if (_secondSelectedCardIconIndex != _emptyIndexNumber)
-            {
-                GameEvents.StartedCardMatchingControl?.Invoke();
-                Invoke(nameof(CheckSelectedCardResult), 0.75f);
-            }
+            _SelectedCardsMatchController.AddSelectedCardItem(gridBoxCardItem);
         }
     }
 }

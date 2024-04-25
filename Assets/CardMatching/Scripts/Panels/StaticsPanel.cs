@@ -2,6 +2,8 @@ using CardMatching.Events;
 using UnityEngine;
 using TMPro;
 using CardMatching.ScriptableObjects;
+using CardMatching.GridBox;
+using System.Collections.Generic;
 
 namespace CardMatching.Panels
 {
@@ -83,12 +85,12 @@ namespace CardMatching.Panels
             ResetDataAndText();
         }
 
-        private void GameEvents_MismatchingCard()
+        private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
         {
             TurnsCount = ++_turnsCount;
         }
 
-        private void GameEvents_MatchingCard()
+        private void GameEvents_MatchingCard(List<GridBoxCardItem> cardList)
         {
             MatchesCount = ++_matchesCount;
             TurnsCount = ++_turnsCount;

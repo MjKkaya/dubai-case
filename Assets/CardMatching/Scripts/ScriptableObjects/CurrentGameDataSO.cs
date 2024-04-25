@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CardMatching.Datas;
 using CardMatching.Events;
 using CardMatching.GridBox;
@@ -37,7 +38,6 @@ namespace CardMatching.ScriptableObjects
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
             GameEvents.EarnedPoint += GameEvents_EarnedPoint;
             GameEvents.EarnedComboPoint += GameEvents_EarnedComboPoint;
-            GameEvents.GameOver += GameEvents_GameOver;
         }
 
         private void OnDisable()
@@ -47,7 +47,6 @@ namespace CardMatching.ScriptableObjects
             GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
             GameEvents.EarnedPoint -= GameEvents_EarnedPoint;
             GameEvents.EarnedComboPoint -= GameEvents_EarnedComboPoint;
-            GameEvents.GameOver -= GameEvents_GameOver;
         }
 
 
@@ -70,6 +69,16 @@ namespace CardMatching.ScriptableObjects
             TurnCount = 0;
         }
 
+        private void CheckGameOver()
+        {
+            if (MatchesCount == PairCount)
+            {
+                Reset();
+                GameEvents.GameOver?.Invoke();
+            }
+        }
+
+
         private void GameEvents_GameStarted(GridDimension gridDimension, GridBoxCardItem[,] gridBoxCardItems)
         {
             _gridBoxCardItems = gridBoxCardItems;
@@ -90,21 +99,17 @@ namespace CardMatching.ScriptableObjects
             IsComboActive = true;
         }
 
-        private void GameEvents_MatchingCard()
+        private void GameEvents_MatchingCard(List<GridBoxCardItem> cardList)
         {
             MatchesCount++;
             TurnCount++;
+            CheckGameOver();
         }
 
-        private void GameEvents_MismatchingCard()
+        private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
         {
             IsComboActive = false;
             TurnCount++;
-        }
-
-        private void GameEvents_GameOver()
-        {
-            Reset();
         }
     }
 }

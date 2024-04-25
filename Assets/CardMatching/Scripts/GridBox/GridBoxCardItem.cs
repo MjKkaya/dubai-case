@@ -118,16 +118,24 @@ namespace CardMatching.GridBox
         {
             _isOpen = !_isOpen;
             SetDisplayImageSprite();
-            transform.transform.DOScaleX(1.0f, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase);
+            transform.transform.DOScaleX(1.0f, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase).OnComplete(OnCompletedFlipAnimation);
+        }
+
+        private void OnCompletedFlipAnimation()
+        {
+            if(_isOpen)
+                GameEvents.CardFlipped?.Invoke(this);
+            else
+                SetInteractible(true);
         }
 
         #endregion
 
-
         public void OnPointerClick(PointerEventData eventData)
         {
             SetInteractible(false);
-            GameEvents.CardSelected?.Invoke(this);
+            StartFlipAniamtion();
+            GameEvents.CardSelected?.Invoke();
         }
     }
 }

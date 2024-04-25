@@ -13,7 +13,7 @@ namespace CardMatching.GridBox
         [SerializeField] private CardDataSO _cardDataSO;
         [SerializeField] private GridBoxCardItem _prefabGridBoxCardItem;
 
-        private ObjectPool<GridBoxCardItem> mGridBoxItemObjectPool;
+        private ObjectPool<GridBoxCardItem> _gridBoxItemObjectPool;
 
 
         void Awake()
@@ -27,7 +27,7 @@ namespace CardMatching.GridBox
         private void InitObjectPool()
         {
             Debug.Log($"{this}-InitObjectPool");
-            mGridBoxItemObjectPool = new ObjectPool<GridBoxCardItem>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 30);
+            _gridBoxItemObjectPool = new ObjectPool<GridBoxCardItem>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 30);
         }
 
         private GridBoxCardItem CreatePooledItem()
@@ -62,20 +62,15 @@ namespace CardMatching.GridBox
 
         public GridBoxCardItem GetGridBoxItem(GridBoxCardData gridBoxData, GridDimension gridLocation)
         {
-            GridBoxCardItem gridBoxItem = mGridBoxItemObjectPool.Get();
+            GridBoxCardItem gridBoxItem = _gridBoxItemObjectPool.Get();
             gridBoxItem.Init(gridBoxData, gridLocation);
             //gridBoxItem.Disappeared = GridBoxItem_Disappeared;
             return gridBoxItem;
         }
 
-        private void GridBoxItem_Disappeared(GridBoxCardItem cardItem)
-        {
-            ReleaseGridBoxItem(cardItem);
-        }
-
         public void ReleaseGridBoxItem(GridBoxCardItem cardItem)
         {
-            mGridBoxItemObjectPool.Release(cardItem);
+            _gridBoxItemObjectPool.Release(cardItem);
         }
 
         #endregion

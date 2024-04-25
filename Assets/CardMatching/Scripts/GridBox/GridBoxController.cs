@@ -21,7 +21,6 @@ namespace CardMatching.GridBox
         [SerializeField] private RectTransform _cardItemContainer;
 
         private GridBoxCardItem[,] _gridBoxCardItems;
-        private List<GridBoxCardItem> _selectedCardItems = new ();
 
         private GridDimension _currentLevelGridAreaDimension;
 
@@ -30,8 +29,6 @@ namespace CardMatching.GridBox
         {
             GameEvents.StartGameWithUnfinishedGameData += GameEvents_StartGameWithUnfinishedGameData;
             GameEvents.GameStarting+= GameEvents_GameStarting;
-            GameEvents.CardSelected += GameEvents_CardSelected;
-            GameEvents.StartedCardMatchingControl += GameEvents_StartedCardMatchingControl;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
         }
@@ -40,8 +37,6 @@ namespace CardMatching.GridBox
         {
             GameEvents.StartGameWithUnfinishedGameData -= GameEvents_StartGameWithUnfinishedGameData;
             GameEvents.GameStarting -= GameEvents_GameStarting;
-            GameEvents.CardSelected -= GameEvents_CardSelected;
-            GameEvents.StartedCardMatchingControl -= GameEvents_StartedCardMatchingControl;
             GameEvents.MatchingCard -= GameEvents_MatchingCard;
             GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
         }
@@ -215,22 +210,20 @@ namespace CardMatching.GridBox
             }
         }
 
-        private void FlipBackSelectedCards()
+        private void FlipBackSelectedCards(List<GridBoxCardItem> selectedCardItems)
         {
-            foreach (GridBoxCardItem cardItem in _selectedCardItems)
+            foreach (GridBoxCardItem cardItem in selectedCardItems)
             {
                 cardItem.StartFlipAniamtion();
             }
-            _selectedCardItems.Clear();
         }
 
-        private void DisappearSelectedCards()
+        private void DisappearMatchedCards(List<GridBoxCardItem> selectedCardItems)
         {
-            foreach (GridBoxCardItem cardItem in _selectedCardItems)
+            foreach (GridBoxCardItem cardItem in selectedCardItems)
             {
                 _gridBoxFactory.ReleaseGridBoxItem(cardItem);
             }
-            _selectedCardItems.Clear();
         }
 
 
@@ -246,28 +239,14 @@ namespace CardMatching.GridBox
             CreateNewLevel();
         }
 
-        private void GameEvents_CardSelected(GridBoxCardItem selectedCardItem)
+        private void GameEvents_MatchingCard(List<GridBoxCardItem> cardList)
         {
-            _selectedCardItems.Add(selectedCardItem);
-            selectedCardItem.StartFlipAniamtion();
-            GameEvents.CardFlipped?.Invoke();
+            DisappearMatchedCards(cardList);
         }
 
-        private void GameEvents_StartedCardMatchingControl()
+        private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
         {
-            SetCardItemInteracable(false);
-        }
-
-        private void GameEvents_MatchingCard()
-        {
-            DisappearSelectedCards();
-            SetCardItemInteracable(true);
-        }
-
-        private void GameEvents_MismatchingCard()
-        {
-            FlipBackSelectedCards();
-            SetCardItemInteracable(true);
+            FlipBackSelectedCards(cardList);
         }
 
         #endregion

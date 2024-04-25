@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using CardMatching.Events;
+using CardMatching.GridBox;
 using UnityEngine;
 
 
@@ -36,7 +38,7 @@ namespace CardMatching.Managers
             _currentStreak = 0;
         }
 
-        private void GameEvents_MatchingCard()
+        private void GameEvents_MatchingCard(List<GridBoxCardItem> cardList)
         {
             _currentStreak++;
             GameEvents.EarnedPoint?.Invoke(_correctAnswerPoint);
@@ -45,7 +47,7 @@ namespace CardMatching.Managers
                 GameEvents.EarnedComboPoint?.Invoke(_comboPoint);
         }
 
-        private void GameEvents_MismatchingCard()
+        private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
         {
             _currentStreak = 0;
         }

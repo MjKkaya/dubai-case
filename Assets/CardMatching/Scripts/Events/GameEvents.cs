@@ -2,6 +2,7 @@ using CardMatching.Datas;
 using CardMatching.GridBox;
 using CardMatching.ScriptableObjects;
 using System;
+using System.Collections.Generic;
 
 
 namespace CardMatching.Events
@@ -16,11 +17,11 @@ namespace CardMatching.Events
         public static Action<GridDimension, GridBoxCardItem[,]> GameStarted;
 
         //It's return selected card icon index number.
-        public static Action<GridBoxCardItem> CardSelected;
-        public static Action CardFlipped;
+        public static Action CardSelected;
+        public static Action<GridBoxCardItem> CardFlipped;
         public static Action StartedCardMatchingControl;
-        public static Action MatchingCard;
-        public static Action MismatchingCard;
+        public static Action<List<GridBoxCardItem>> MatchingCard;
+        public static Action<List<GridBoxCardItem>> MismatchingCard;
         public static Action GameOver;
 
         public static Action<float> EarnedPoint;
