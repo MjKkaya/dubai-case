@@ -28,6 +28,7 @@ namespace CardMatching.ScriptableObjects
         public int TurnCount;
 
         private GridBoxCardItem[,] _gridBoxCardItems;
+        private bool isGameCompleted; 
 
 
         private void OnEnable()
@@ -74,6 +75,7 @@ namespace CardMatching.ScriptableObjects
             if (MatchesCount == PairCount)
             {
                 Reset();
+                isGameCompleted = true;
                 GameEvents.GameOver?.Invoke();
             }
         }
@@ -86,15 +88,20 @@ namespace CardMatching.ScriptableObjects
             PairCount = gridDimension.X * gridDimension.Y / 2;
             GridAreaDimensionX = gridDimension.X;
             GridAreaDimensionY = gridDimension.Y;
+            isGameCompleted = false;
         }
 
         private void GameEvents_EarnedPoint(float point)
         {
+            if (isGameCompleted)
+                return;
             Score += point;
         }
 
         private void GameEvents_EarnedComboPoint(float point)
         {
+            if (isGameCompleted)
+                return;
             Score += point;
             IsComboActive = true;
         }

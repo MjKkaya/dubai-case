@@ -33,9 +33,7 @@ namespace CardMatching.Gameplay
             {
                 selectedPairCard = _selectedPairCardList[i];
                 if (!selectedPairCard.IsFull())
-                {
                     return selectedPairCard;
-                }
             }
 
             selectedPairCard = new SelectedPairCard();
@@ -77,6 +75,7 @@ namespace CardMatching.Gameplay
 
         public void Clear()
         {
+            Debug.Log($"{this}-Clear:{_firstSelectedItem.name} / {_secondSelectedItem.name}");
             _firstSelectedItem = null;
             _secondSelectedItem = null;
         }
