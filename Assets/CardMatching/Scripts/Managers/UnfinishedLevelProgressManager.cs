@@ -49,6 +49,7 @@ namespace CardMatching.Managers
         {
             Debug.Log($"{this}-SaveLastUnfinishedGameData");
             PlayerPrefs.SetString(_unfinishedGameDataKey, JsonUtility.ToJson(currentGameData));
+            PlayerPrefs.Save();
         }
 
         private void LoadLastUnfinishedGameData()
