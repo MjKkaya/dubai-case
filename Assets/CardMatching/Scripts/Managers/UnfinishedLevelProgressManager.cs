@@ -14,13 +14,13 @@ namespace CardMatching.Managers
 
         private void OnEnable()
         {
-            GameEvents.GameStarting += GameEvents_GameStarting;
+            GameEvents.NewGameStarting += GameEvents_GameStarting;
             GameEvents.GameOver += GameEvents_GameOver;
         }
 
         private void OnDisable()
         {
-            GameEvents.GameStarting -= GameEvents_GameStarting;
+            GameEvents.NewGameStarting -= GameEvents_GameStarting;
             GameEvents.GameOver -= GameEvents_GameOver;
         }
 
@@ -36,7 +36,7 @@ namespace CardMatching.Managers
 
         private void OnApplicationQuit()
         {
-            Debug.Log($"{this}-OnApplicationQuit");
+            Debug.Log($"{this}-OnApplicationQuit-TurnCount:{currentGameData.TurnCount}");
             if (currentGameData.TurnCount > 0)
             {
                 currentGameData.PrepareOneDimensionArray();

@@ -38,13 +38,13 @@ namespace CardMatching.Panels
 
         private void OnClickedContinueButton()
         {
-            GameEvents.StartGameWithUnfinishedGameData?.Invoke(CurrentGameData);
+            GameEvents.UnfinishedGameStarting?.Invoke(CurrentGameData);
             HidePanel();
         }
 
         private void OnClickedNewGameButton()
         {
-            GameEvents.GameStarting?.Invoke();
+            GameEvents.NewGameStarting?.Invoke();
             HidePanel();
         }
     }

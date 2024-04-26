@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 7452447379019288839}
   - component: {fileID: 4389951204374295769}
   - component: {fileID: 7767594727148189966}
+  - component: {fileID: 8488674302618915587}
   m_Layer: 5
   m_Name: GridBoxCardItem
   m_TagString: Untagged
@@ -166,4 +167,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bd7a27904da84fe0847d73e68ed3017, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _cardIconIndex: 0
   _displayImage: {fileID: 32155198104953547}
+--- !u!225 &8488674302618915587
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7491803543843302924}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

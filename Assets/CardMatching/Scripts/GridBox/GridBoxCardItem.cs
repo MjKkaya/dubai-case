@@ -54,22 +54,19 @@ namespace CardMatching.GridBox
             }
         }
 
-        // for test - displaying in the inspector.
-        [SerializeField] private int _cardIconIndex;
         [SerializeField] private Image _displayImage;
-        private Image _raycatsTargetImage;
+        private CanvasGroup _canvasGroup;
         private bool _isOpen;
 
 
         private void Awake()
         {
-            _raycatsTargetImage = GetComponent<Image>();
+            _canvasGroup = GetComponent<CanvasGroup>();
         }
 
 
         public void Init(GridBoxCardData gridBoxCardData, GridDimension gridLocation)
         {
-            _cardIconIndex = gridBoxCardData.CardIconIndex;
             _gridBoxCardData = gridBoxCardData;
             GridLocation = gridLocation;
             _isOpen = false;
@@ -79,12 +76,18 @@ namespace CardMatching.GridBox
 
         public void SetActive(bool isActive)
         {
-            gameObject.SetActive(isActive);
+            if (isActive)
+            {
+                _canvasGroup.alpha = 1;
+                gameObject.SetActive(isActive);
+            }
+            else
+                StartFadeAnimation();
         }
 
         public void SetInteractible(bool isActive)
         {
-            _raycatsTargetImage.raycastTarget = isActive;
+            _canvasGroup.blocksRaycasts = isActive;
         }
 
 
@@ -106,7 +109,7 @@ namespace CardMatching.GridBox
         }
 
 
-        #region Flipping Animation
+        #region Animations
 
         public void StartFlipAniamtion()
         {
@@ -129,7 +132,19 @@ namespace CardMatching.GridBox
                 SetInteractible(true);
         }
 
+
+        private void StartFadeAnimation()
+        {
+            _canvasGroup.DOFade(0, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase).OnComplete(OnCompletedFadeAnimation);
+        }
+
+        private void OnCompletedFadeAnimation()
+        {
+            gameObject.SetActive(false);
+        }
+
         #endregion
+
 
         public void OnPointerClick(PointerEventData eventData)
         {

@@ -20,14 +20,14 @@ namespace CardMatching.Managers
 
         private void OnEnable()
         {
-            GameEvents.GameStarting += GameEvents_GameStarting;
+            GameEvents.NewGameStarting += GameEvents_GameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
         }
 
         private void OnDisable()
         {
-            GameEvents.GameStarting -= GameEvents_GameStarting;
+            GameEvents.NewGameStarting -= GameEvents_GameStarting;
             GameEvents.MatchingCard -= GameEvents_MatchingCard;
             GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
         }

@@ -34,6 +34,7 @@ namespace CardMatching.ScriptableObjects
         private void OnEnable()
         {
             Reset();
+            GameEvents.NewGameStarting += GameEvents_NewGameStarting;
             GameEvents.GameStarted += GameEvents_GameStarted;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
@@ -43,6 +44,7 @@ namespace CardMatching.ScriptableObjects
 
         private void OnDisable()
         {
+            GameEvents.NewGameStarting += GameEvents_NewGameStarting;
             GameEvents.GameStarted -= GameEvents_GameStarted;
             GameEvents.MatchingCard -= GameEvents_MatchingCard;
             GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
@@ -72,6 +74,7 @@ namespace CardMatching.ScriptableObjects
 
         private void CheckGameOver()
         {
+            Debug.Log($"{this}-CheckGameOver:{MatchesCount}/{PairCount}");
             if (MatchesCount == PairCount)
             {
                 Reset();
@@ -81,8 +84,15 @@ namespace CardMatching.ScriptableObjects
         }
 
 
+        private void GameEvents_NewGameStarting()
+        {
+            Debug.Log($"{this}-GameEvents_NewGameStarting");
+            Reset();
+        }
+
         private void GameEvents_GameStarted(GridDimension gridDimension, GridBoxCardItem[,] gridBoxCardItems)
         {
+            Debug.Log($"{this}-GameEvents_GameStarted");
             _gridBoxCardItems = gridBoxCardItems;
             IconIndexArray = Tools.ConvertGridBoxCardItemsToOneDimension(_gridBoxCardItems);
             PairCount = gridDimension.X * gridDimension.Y / 2;

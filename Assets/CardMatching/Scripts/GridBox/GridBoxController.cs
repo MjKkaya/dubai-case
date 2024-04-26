@@ -27,16 +27,16 @@ namespace CardMatching.GridBox
 
         private void OnEnable()
         {
-            GameEvents.StartGameWithUnfinishedGameData += GameEvents_StartGameWithUnfinishedGameData;
-            GameEvents.GameStarting+= GameEvents_GameStarting;
+            GameEvents.UnfinishedGameStarting += GameEvents_UnfinishedGameStarting;
+            GameEvents.NewGameStarting+= GameEvents_GameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
         }
 
         private void OnDisable()
         {
-            GameEvents.StartGameWithUnfinishedGameData -= GameEvents_StartGameWithUnfinishedGameData;
-            GameEvents.GameStarting -= GameEvents_GameStarting;
+            GameEvents.UnfinishedGameStarting -= GameEvents_UnfinishedGameStarting;
+            GameEvents.NewGameStarting -= GameEvents_GameStarting;
             GameEvents.MatchingCard -= GameEvents_MatchingCard;
             GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
         }
@@ -229,7 +229,7 @@ namespace CardMatching.GridBox
 
         #region Game Events
 
-        private void GameEvents_StartGameWithUnfinishedGameData(CurrentGameDataSO currentGameDataSO)
+        private void GameEvents_UnfinishedGameStarting(CurrentGameDataSO currentGameDataSO)
         {
             StartGameWithUnfinishedGameData(currentGameDataSO);
         }

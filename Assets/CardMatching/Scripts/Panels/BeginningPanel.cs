@@ -26,7 +26,7 @@ namespace CardMatching.Panels
 
         private void OnClickedPlayButton()
         {
-            GameEvents.GameStarting?.Invoke();
+            GameEvents.NewGameStarting?.Invoke();
             HidePanel();
         }
 

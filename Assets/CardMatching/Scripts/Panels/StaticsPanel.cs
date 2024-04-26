@@ -46,8 +46,8 @@ namespace CardMatching.Panels
 
         private void OnEnable()
         {
-            GameEvents.StartGameWithUnfinishedGameData += GameEvents_StartGameWithUnfinishedGameData;
-            GameEvents.GameStarting += GameEvents_GameStarting;
+            GameEvents.UnfinishedGameStarting += GameEvents_UnfinishedGameStarting;
+            GameEvents.NewGameStarting += GameEvents_NewGameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
             GameEvents.EarnedPoint += GameEvents_EarnedPoint;
@@ -56,8 +56,8 @@ namespace CardMatching.Panels
 
         private void OnDisable()
         {
-            GameEvents.StartGameWithUnfinishedGameData -= GameEvents_StartGameWithUnfinishedGameData;
-            GameEvents.GameStarting -= GameEvents_GameStarting;
+            GameEvents.UnfinishedGameStarting -= GameEvents_UnfinishedGameStarting;
+            GameEvents.NewGameStarting -= GameEvents_NewGameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
             GameEvents.MismatchingCard += GameEvents_MismatchingCard;
             GameEvents.EarnedPoint -= GameEvents_EarnedPoint;
@@ -73,14 +73,14 @@ namespace CardMatching.Panels
         }
 
 
-        private void GameEvents_StartGameWithUnfinishedGameData(CurrentGameDataSO currentGameDataSO)
+        private void GameEvents_UnfinishedGameStarting(CurrentGameDataSO currentGameDataSO)
         {
             CurrentScore = currentGameDataSO.Score;
             MatchesCount = currentGameDataSO.MatchesCount;
             TurnsCount = currentGameDataSO.TurnCount;
         }
 
-        private void GameEvents_GameStarting()
+        private void GameEvents_NewGameStarting()
         {
             ResetDataAndText();
         }
