@@ -12,6 +12,7 @@ namespace CardMatching.Panels
         protected virtual void Awake()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
+            HidePanel();
         }
 
 

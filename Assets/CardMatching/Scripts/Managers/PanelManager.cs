@@ -15,7 +15,6 @@ namespace CardMatching.Managers
         private void Start()
         {
             SubscribeToEvents();
-            Initialize();
         }
 
         private void OnDisable()
@@ -23,17 +22,6 @@ namespace CardMatching.Managers
             UnsubscribeFromEvents();
         }
 
-
-        private void Initialize()
-        {
-            HidePanels();
-        }
-
-        private void HidePanels()
-        {
-            _beginningPanel.HidePanel();
-            _unfinishedLevelProgressPanel.HidePanel();
-        }
 
         private void SubscribeToEvents()
         {
