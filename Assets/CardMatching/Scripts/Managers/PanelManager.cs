@@ -12,7 +12,7 @@ namespace CardMatching.Managers
         [SerializeField] private UnfinishedLevelProgressPanel _unfinishedLevelProgressPanel;
 
         
-        private void Start()
+        private void Awake()
         {
             SubscribeToEvents();
         }
