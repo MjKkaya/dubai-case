@@ -2,7 +2,6 @@ using CardMatching.Datas;
 using CardMatching.GridBox;
 using CardMatching.ScriptableObjects;
 using System;
-using System.Collections.Generic;
 
 
 namespace CardMatching.Events
@@ -20,8 +19,8 @@ namespace CardMatching.Events
         public static Action CardSelected;
         public static Action<GridBoxCardItem> CardFlipped;
         public static Action StartedCardMatchingControl;
-        public static Action<List<GridBoxCardItem>> MatchingCard;
-        public static Action<List<GridBoxCardItem>> MismatchingCard;
+        public static Action<GridBoxCardItem, GridBoxCardItem> MatchingCard;
+        public static Action MismatchingCard;
         public static Action GameOver;
 
         public static Action<float> EarnedPoint;

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using CardMatching.Datas;
 using CardMatching.Events;
 using CardMatching.GridBox;
@@ -12,8 +11,6 @@ namespace CardMatching.ScriptableObjects
     [SerializeField]
     public class CurrentGameDataSO : ScriptableObject
     {
-        public const int EmptyBoxIconIndex = -1;
-
         [Header("Only set at the beginning of the game")]
         public int[] IconIndexArray;
         public int PairCount;
@@ -74,7 +71,7 @@ namespace CardMatching.ScriptableObjects
 
         private void CheckGameOver()
         {
-            Debug.Log($"{this}-CheckGameOver:{MatchesCount}/{PairCount}");
+            CustomDebug.Log($"{this}-CheckGameOver:{MatchesCount}/{PairCount}");
             if (MatchesCount == PairCount)
             {
                 Reset();
@@ -86,13 +83,13 @@ namespace CardMatching.ScriptableObjects
 
         private void GameEvents_NewGameStarting()
         {
-            Debug.Log($"{this}-GameEvents_NewGameStarting");
+            CustomDebug.Log($"{this}-GameEvents_NewGameStarting");
             Reset();
         }
 
         private void GameEvents_GameStarted(GridDimension gridDimension, GridBoxCardItem[,] gridBoxCardItems)
         {
-            Debug.Log($"{this}-GameEvents_GameStarted");
+            CustomDebug.Log($"{this}-GameEvents_GameStarted");
             _gridBoxCardItems = gridBoxCardItems;
             IconIndexArray = Tools.ConvertGridBoxCardItemsToOneDimension(_gridBoxCardItems);
             PairCount = gridDimension.X * gridDimension.Y / 2;
@@ -116,14 +113,14 @@ namespace CardMatching.ScriptableObjects
             IsComboActive = true;
         }
 
-        private void GameEvents_MatchingCard(List<GridBoxCardItem> cardList)
+        private void GameEvents_MatchingCard(GridBoxCardItem firstSelectedCardOne, GridBoxCardItem secondSelectedCard)
         {
             MatchesCount++;
             TurnCount++;
             CheckGameOver();
         }
 
-        private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
+        private void GameEvents_MismatchingCard()
         {
             IsComboActive = false;
             TurnCount++;

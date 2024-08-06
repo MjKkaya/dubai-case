@@ -1,5 +1,6 @@
 using CardMatching.Events;
 using CardMatching.ScriptableObjects;
+using CardMatching.Utilities;
 using UnityEngine;
 
 
@@ -36,7 +37,7 @@ namespace CardMatching.Managers
 
         private void OnApplicationQuit()
         {
-            Debug.Log($"{this}-OnApplicationQuit-TurnCount:{currentGameData.TurnCount}");
+            CustomDebug.Log($"{this}-OnApplicationQuit-TurnCount:{currentGameData.TurnCount}");
             if (currentGameData.TurnCount > 0)
             {
                 currentGameData.PrepareOneDimensionArray();
@@ -47,7 +48,7 @@ namespace CardMatching.Managers
 
         private void SaveLastUnfinishedGameData()
         {
-            Debug.Log($"{this}-SaveLastUnfinishedGameData");
+            CustomDebug.Log($"{this}-SaveLastUnfinishedGameData");
             PlayerPrefs.SetString(_unfinishedGameDataKey, JsonUtility.ToJson(currentGameData));
             PlayerPrefs.Save();
         }

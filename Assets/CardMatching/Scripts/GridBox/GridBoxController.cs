@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using CardMatching.Datas;
 using CardMatching.Events;
 using CardMatching.ScriptableObjects;
 using CardMatching.Utilities;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -12,15 +12,19 @@ namespace CardMatching.GridBox
     [RequireComponent(typeof(GridBoxItemFactory))]
     public class GridBoxController : MonoBehaviour
     {
-        private const int _minDimentionValue = 2;
-        private const int _maxnDimentionValue = 6;
+        private const int _minDimentionValue = 4;
+        private const int _maxDimentionValue = 4;
 
         private readonly WaitForSeconds _waitForFirstTimeCardShowing = new (1f);
 
         [SerializeField] private GridBoxItemFactory _gridBoxFactory;
+        [SerializeField] private GridBoxItemDataFactory _gridBoxItemDataFactory;
         [SerializeField] private RectTransform _cardItemContainer;
 
-        private GridBoxCardItem[,] _gridBoxCardItems;
+        //We create max distance because prevent to memory fragment
+        //readonlykeywords only prevent to assign new istance to the variable!
+        private readonly GridBoxCardItem[,] _gridBoxCardItems = new GridBoxCardItem[_maxDimentionValue, _maxDimentionValue];
+        private readonly List<GridBoxCardData> _gridBoxCardItemDataList = new();
 
         private GridDimension _currentLevelGridAreaDimension;
 
@@ -30,7 +34,8 @@ namespace CardMatching.GridBox
             GameEvents.UnfinishedGameStarting += GameEvents_UnfinishedGameStarting;
             GameEvents.NewGameStarting+= GameEvents_GameStarting;
             GameEvents.MatchingCard += GameEvents_MatchingCard;
-            GameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            //GameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            GameEvents.GameOver += GameEvents_GameOver;
         }
 
         private void OnDisable()
@@ -38,36 +43,37 @@ namespace CardMatching.GridBox
             GameEvents.UnfinishedGameStarting -= GameEvents_UnfinishedGameStarting;
             GameEvents.NewGameStarting -= GameEvents_GameStarting;
             GameEvents.MatchingCard -= GameEvents_MatchingCard;
-            GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+            //GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+            GameEvents.GameOver -= GameEvents_GameOver;
         }
 
 
         private void StartGameWithUnfinishedGameData(CurrentGameDataSO currentGameDataSO)
         {
             _currentLevelGridAreaDimension = new GridDimension(currentGameDataSO.GridAreaDimensionX, currentGameDataSO.GridAreaDimensionY);
-            List<GridBoxCardData> _cardDataList = new(_gridBoxFactory.CreateCardDataListWithCurrentData(currentGameDataSO.IconIndexArray));
-            CreateGridBoxItems(_cardDataList);
+            _gridBoxItemDataFactory.CreateCardDataListWithCurrentData(_gridBoxCardItemDataList, currentGameDataSO.IconIndexArray);
+            CreateGridBoxItems(_gridBoxCardItemDataList);
             GameEvents.GameStarted?.Invoke(_currentLevelGridAreaDimension, _gridBoxCardItems);
             SetCardItemInteracable(true);
-            //It was closed because player can abuse this situation.
-            //StartCoroutine(ShowAllCardforShortTime()); 
+            //StartCoroutine(ShowAllCardforShortTime()); //It was closed because player can abuse this situation.
         }
 
         private void CreateNewLevel()
         {
             _currentLevelGridAreaDimension = CreateRandomGridDimension();
             int pairCount = _currentLevelGridAreaDimension.X * _currentLevelGridAreaDimension.Y / 2;
-            List<GridBoxCardData> _cardDataList = CreateCardDataList(pairCount);
-            CreateGridBoxItems(_cardDataList);
+            FillGridBoxCardItemDataList(pairCount);
+            CreateGridBoxItems(_gridBoxCardItemDataList);
             GameEvents.GameStarted?.Invoke(_currentLevelGridAreaDimension, _gridBoxCardItems);
             StartCoroutine(ShowAllCardforShortTime());
+            //AIAutoPlayTest.StartTest(_gridBoxCardItems);
         }
 
         private GridDimension CreateRandomGridDimension()
         {
-            int sideX = Random.Range(_minDimentionValue, _maxnDimentionValue);
-            int sideY = Random.Range(_minDimentionValue, _maxnDimentionValue);
-
+            int sideX = Random.Range(_minDimentionValue, _maxDimentionValue+1);
+            int sideY = Random.Range(_minDimentionValue, _maxDimentionValue+1);
+            CustomDebug.Log($"{this}-sideX:{sideX}, sideY:{sideY}");
             //prevent odd number of total cards
             if (sideX%2 != 0 && sideY % 2 != 0)
             {
@@ -77,16 +83,17 @@ namespace CardMatching.GridBox
                     sideY--;
             }
 
+            CustomDebug.Log($"{this}-sideX:{sideX}, sideY:{sideY}");
             return new GridDimension(sideX, sideY);
         }
 
 
-        private List<GridBoxCardData> CreateCardDataList(int pairCount)
+        private void FillGridBoxCardItemDataList(int pairCount)
         {
-            List<GridBoxCardData> _cardDataList = new(_gridBoxFactory.CreateCardDataListForCurrentLevel(pairCount));
-            _cardDataList.AddRange(_cardDataList);
-            _cardDataList.Shuffle();
-            return _cardDataList;
+            _gridBoxCardItemDataList.Clear();
+            _gridBoxItemDataFactory.CreateCardDataListForCurrentLevel(_gridBoxCardItemDataList, pairCount);
+            _gridBoxCardItemDataList.AddRange(_gridBoxCardItemDataList);
+            _gridBoxCardItemDataList.Shuffle();
         }
 
         private void CreateGridBoxItems(List<GridBoxCardData> _cardDataList)
@@ -94,8 +101,6 @@ namespace CardMatching.GridBox
             Vector2 gapForCardItem = CalculateGapBetweenCardItems(0.1f);
             Vector2 cardItemNewSize = CalculateCardItemSize(gapForCardItem);
             Vector2 cardItemHalfSize = cardItemNewSize * 0.5f;
-
-            _gridBoxCardItems = new GridBoxCardItem[_currentLevelGridAreaDimension.Y, _currentLevelGridAreaDimension.X];
 
             int indexNo = 0;
             Vector2 cardItemPosition;
@@ -109,7 +114,7 @@ namespace CardMatching.GridBox
                 for (int x = 0; x < _currentLevelGridAreaDimension.X; x++)
                 {
                     //don't create opened card. This control for continue game!
-                    if (_cardDataList[indexNo].CardIconIndex == CurrentGameDataSO.EmptyBoxIconIndex)
+                    if (_cardDataList[indexNo].CardIconIndex == GridBoxCardData.EmptyIndexNo)
                     {
                         indexNo++;
                         continue;
@@ -126,7 +131,7 @@ namespace CardMatching.GridBox
 
                     _gridBoxCardItems[y, x] = gridBoxCardItem;
 
-                    Debug.Log($"{this}-indexNo:{indexNo}, data:{_cardDataList[indexNo]}, name:{gridBoxCardItem.name}");
+                    CustomDebug.Log($"{this}-indexNo:{indexNo}, data:{_cardDataList[indexNo]}, name:{gridBoxCardItem.name}");
                     indexNo++;
                 }
             }
@@ -155,7 +160,7 @@ namespace CardMatching.GridBox
                     if (gridBoxItem != null && gridBoxItem.gameObject.activeInHierarchy)
                     {
                         gridBoxItem.SetDisplayImageSprite(false);
-                        gridBoxItem.SetInteractible(true);
+                        gridBoxItem.SetInteraction(true);
                     }
                 }
             }
@@ -173,7 +178,7 @@ namespace CardMatching.GridBox
 
             gap = new Vector2(gapX, gapY);
 
-            Debug.Log($"{this}-CalculateGapBetweenCardItems-_cardItemContainer:{_cardItemContainer.rect.width}/{_cardItemContainer.rect.height} gap:{gap}");
+            CustomDebug.Log($"{this}-CalculateGapBetweenCardItems-_cardItemContainer:{_cardItemContainer.rect.width}/{_cardItemContainer.rect.height} gap:{gap}");
             return gap;
         }
 
@@ -188,7 +193,7 @@ namespace CardMatching.GridBox
             float itemNewSizeY = gapRemovedHeight / _currentLevelGridAreaDimension.Y;
 
             newSize = new Vector2(itemNewSizeX, itemNewSizeY);
-            Debug.Log($"{this}-CalculateCardItemSize-newSize: {newSize}");
+            CustomDebug.Log($"{this}-CalculateCardItemSize-newSize: {newSize}");
 
             return newSize;
         }
@@ -205,24 +210,36 @@ namespace CardMatching.GridBox
                 {
                     gridBoxItem = _gridBoxCardItems[y, x];
                     if (gridBoxItem != null && gridBoxItem.gameObject.activeInHierarchy)
-                        gridBoxItem.SetInteractible(isActive);
+                        gridBoxItem.SetInteraction(isActive);
                 }
             }
         }
 
-        private void FlipBackSelectedCards(List<GridBoxCardItem> selectedCardItems)
+        //private void FlipBackSelectedCards(List<GridBoxCardItem> selectedCardItems)
+        //{
+        //    foreach (GridBoxCardItem cardItem in selectedCardItems)
+        //    {
+        //        cardItem.StartFlipAniamtion();
+        //    }
+        //}
+
+        private void DisappearMatchedCards(GridBoxCardItem firstSelectedCardOne, GridBoxCardItem secondSelectedCard)
         {
-            foreach (GridBoxCardItem cardItem in selectedCardItems)
-            {
-                cardItem.StartFlipAniamtion();
-            }
+            _gridBoxFactory.ReleaseGridBoxItem(firstSelectedCardOne);
+            _gridBoxFactory.ReleaseGridBoxItem(secondSelectedCard);
+            //foreach (GridBoxCardItem cardItem in selectedCardItems)
+            //{
+            //    _gridBoxFactory.ReleaseGridBoxItem(cardItem);
+            //}
         }
 
-        private void DisappearMatchedCards(List<GridBoxCardItem> selectedCardItems)
+        private void ReleaseGridBoxCardItemDataList()
         {
-            foreach (GridBoxCardItem cardItem in selectedCardItems)
+            foreach (GridBoxCardData data in _gridBoxCardItemDataList)
             {
-                _gridBoxFactory.ReleaseGridBoxItem(cardItem);
+                //We must to check this control because this is twin list, ex: if we have 6 card in the list, that means; 3 different card data and each data class duplicated.
+                if(data.CardIconIndex != GridBoxCardData.EmptyIndexNo)
+                    _gridBoxItemDataFactory.ReleaseGridBoxItemData(data);
             }
         }
 
@@ -239,14 +256,19 @@ namespace CardMatching.GridBox
             CreateNewLevel();
         }
 
-        private void GameEvents_MatchingCard(List<GridBoxCardItem> cardList)
+        private void GameEvents_MatchingCard(GridBoxCardItem firstSelectedCardOne, GridBoxCardItem secondSelectedCard)
         {
-            DisappearMatchedCards(cardList);
+            DisappearMatchedCards(firstSelectedCardOne, secondSelectedCard);
         }
 
-        private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
+        //private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
+        //{
+        //    FlipBackSelectedCards(cardList);
+        //}
+
+        private void GameEvents_GameOver()
         {
-            FlipBackSelectedCards(cardList);
+            ReleaseGridBoxCardItemDataList();
         }
 
         #endregion

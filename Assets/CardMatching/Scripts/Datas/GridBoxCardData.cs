@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 
@@ -7,6 +6,8 @@ namespace CardMatching.Datas
     [SerializeField]
     public class GridBoxCardData
     {
+        public const int EmptyIndexNo = -1;
+
         private int _cardIconIndex;
         public int CardIconIndex
         {
@@ -39,11 +40,27 @@ namespace CardMatching.Datas
             }
         }
 
+        public GridBoxCardData() {}
+
         public GridBoxCardData(int cardIconIndex, Sprite cardIcon, Sprite coverImage)
         {
             _cardIconIndex = cardIconIndex;
             _cardIcon = cardIcon;
             _coverImage = coverImage;
+        }
+
+        public void Set(int cardIconIndex, Sprite cardIcon, Sprite coverImage)
+        {
+            _cardIconIndex = cardIconIndex;
+            _cardIcon = cardIcon;
+            _coverImage = coverImage;
+        }
+
+        public void Clear()
+        {
+            _cardIconIndex = EmptyIndexNo;
+            _cardIcon = null;
+            _coverImage = null;
         }
     }
 

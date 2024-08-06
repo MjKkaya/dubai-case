@@ -1,5 +1,5 @@
+using CardMatching.Datas;
 using CardMatching.GridBox;
-using CardMatching.ScriptableObjects;
 
 namespace CardMatching.Utilities
 {
@@ -21,7 +21,7 @@ namespace CardMatching.Utilities
                     if (cardItem != null && cardItem.isActiveAndEnabled)
                         indexArray[indexNo] = cardItem.CardIconIndex;
                     else
-                        indexArray[indexNo] = CurrentGameDataSO.EmptyBoxIconIndex;
+                        indexArray[indexNo] = GridBoxCardData.EmptyIndexNo;
                     indexNo++;
                 }
             }

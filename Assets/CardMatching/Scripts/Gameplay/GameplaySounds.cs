@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using CardMatching.Events;
 using CardMatching.GridBox;
 using CardMatching.Managers;
@@ -44,13 +43,13 @@ namespace CardMatching.Gameplay
         }
 
         // Play the matching card sound effect
-        private void GameEvents_MatchingCard(List<GridBoxCardItem> cardList)
+        private void GameEvents_MatchingCard(GridBoxCardItem firstSelectedCardOne, GridBoxCardItem secondSelectedCard)
         {
             _audioManager.PlaySFX(_audioManager.AudioSettingsData.MatchingCardSound);
         }
 
         // Play the mismatching card sound effect
-        private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
+        private void GameEvents_MismatchingCard()
         {
             _audioManager.PlaySFX(_audioManager.AudioSettingsData.MismatchingCardSound);
         }

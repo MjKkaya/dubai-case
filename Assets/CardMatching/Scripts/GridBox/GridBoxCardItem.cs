@@ -54,6 +54,14 @@ namespace CardMatching.GridBox
             }
         }
 
+        public bool IsInteractable
+        {
+            get
+            {
+                return _canvasGroup.blocksRaycasts;
+            }
+        }
+
         [SerializeField] private Image _displayImage;
         private CanvasGroup _canvasGroup;
         private bool _isOpen;
@@ -61,6 +69,7 @@ namespace CardMatching.GridBox
 
         private void Awake()
         {
+            //CustomDebug.Log($"{this}-Awake");
             _canvasGroup = GetComponent<CanvasGroup>();
         }
 
@@ -70,7 +79,7 @@ namespace CardMatching.GridBox
             _gridBoxCardData = gridBoxCardData;
             GridLocation = gridLocation;
             _isOpen = false;
-            SetInteractible(false);
+            SetInteraction(false);
             SetDisplayImageSprite();
         }
 
@@ -85,7 +94,7 @@ namespace CardMatching.GridBox
                 StartFadeAnimation();
         }
 
-        public void SetInteractible(bool isActive)
+        public void SetInteraction(bool isActive)
         {
             _canvasGroup.blocksRaycasts = isActive;
         }
@@ -113,7 +122,7 @@ namespace CardMatching.GridBox
 
         public void StartFlipAniamtion()
         {
-            Debug.Log($"StartFlipAniamtion-_isOpen: {_isOpen}");
+            //CustomDebug.Log($"StartFlipAniamtion-_isOpen: {_isOpen}");
             transform.transform.DOScaleX(0.0f, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase).OnComplete(FlipAnimationSecondStep);
         }
 
@@ -129,7 +138,7 @@ namespace CardMatching.GridBox
             if(_isOpen)
                 GameEvents.CardFlipped?.Invoke(this);
             else
-                SetInteractible(true);
+                SetInteraction(true);
         }
 
 
@@ -145,10 +154,13 @@ namespace CardMatching.GridBox
 
         #endregion
 
-
+        /// <summary>
+        /// The method is member of IPointerClickHandler
+        /// </summary>
+        /// <param name="eventData"></param>
         public void OnPointerClick(PointerEventData eventData)
         {
-            SetInteractible(false);
+            SetInteraction(false);
             StartFlipAniamtion();
             GameEvents.CardSelected?.Invoke();
         }

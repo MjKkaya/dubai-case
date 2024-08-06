@@ -31,6 +31,7 @@ SpriteAtlas:
       m_CrunchedCompression: 0
       m_AllowsAlphaSplitting: 0
       m_Overridden: 0
+      m_IgnorePlatformSupport: 0
       m_AndroidETC2FallbackOverride: 0
       m_ForceMaximumCompressionQuality_BC6H_BC7: 0
     packingSettings:
@@ -48,9 +49,25 @@ SpriteAtlas:
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - e37c05b058a9d45bf894878297c2b2f0: 21300000
+    - 4bd9fac02d3b741c3868f37d41a5fb92: 21300000
+    - ebc4ce11bc32640f3b5d0c97d2a205d2: 21300000
+    - 08df4162482644bd6a90ca37dd66ee25: 21300000
+    - cd704bc2e53414f2cb4b8951be1d80ea: 21300000
+    - f276efc2b17674b0e80f3b5d49b0563b: 21300000
+    - 784fd2b82aefc42738e6c9db990d29db: 21300000
+    - ebba94e8a4c584581b6de9a785355c45: 21300000
+    - 827d46f87a60941c68859cc96f351039: 21300000
+    - ac41a20a6696f472f9562f9164f193c2: 21300000
+    - 5385dc4c882724441b681fdf75ff2053: 21300000
+    - 7b27016e5e4bd4b23a0e120603427b43: 21300000
+    - 4a859bde803c44109a4fddca31f21c47: 21300000
+    - f2b376ffc2f4d4931ae2df5eeb7f6413: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: e37c05b058a9d45bf894878297c2b2f0, type: 3}
+  - {fileID: 21300000, guid: 4bd9fac02d3b741c3868f37d41a5fb92, type: 3}
   - {fileID: 21300000, guid: ebc4ce11bc32640f3b5d0c97d2a205d2, type: 3}
   - {fileID: 21300000, guid: 08df4162482644bd6a90ca37dd66ee25, type: 3}
   - {fileID: 21300000, guid: cd704bc2e53414f2cb4b8951be1d80ea, type: 3}
@@ -65,6 +82,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f2b376ffc2f4d4931ae2df5eeb7f6413, type: 3}
   m_PackedSpriteNamesToIndex:
   - CardIcon_cow
+  - WhiteRectangle
   - CardIcon_whale
   - CardIcon_bee
   - CardIcon_hen

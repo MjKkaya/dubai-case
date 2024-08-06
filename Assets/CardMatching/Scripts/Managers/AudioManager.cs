@@ -17,7 +17,7 @@ namespace CardMatching.Managers
 
         public void PlaySFX(AudioClip clip)
         {
-            Debug.Log($"{this}");
+            //CustomDebug.Log($"{this}");
             _audioSource.Stop();
             if (clip != null)
                 _audioSource.PlayOneShot(clip);
