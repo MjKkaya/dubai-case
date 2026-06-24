@@ -8,7 +8,6 @@ using UnityEngine;
 namespace CardMatching.ScriptableObjects
 {
     [CreateAssetMenu(fileName = "CurrentGameDataSO", menuName = "CardMatching/CurrentGameDataSO")]
-    [SerializeField]
     public class CurrentGameDataSO : ScriptableObject
     {
         [Header("Only set at the beginning of the game")]

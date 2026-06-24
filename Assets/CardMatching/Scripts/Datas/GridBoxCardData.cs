@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace CardMatching.Datas
 {
-    [SerializeField]
     public class GridBoxCardData
     {
         public const int EmptyIndexNo = -1;
