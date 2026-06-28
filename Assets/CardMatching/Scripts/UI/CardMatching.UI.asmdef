@@ -1,0 +1,17 @@
+{
+    "name": "CardMatching.UI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f7cb0d70d3e3c4acf980411e2c1a7cc3",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

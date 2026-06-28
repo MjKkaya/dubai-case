@@ -1,0 +1,17 @@
+{
+    "name": "CardMatching.Infrastructure",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f7cb0d70d3e3c4acf980411e2c1a7cc3",
+        "GUID:3c5c62d02e9c84635b08df13307d0f10"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

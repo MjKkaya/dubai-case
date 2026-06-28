@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using CardMatching.GridBox;
+using CardMatching.Core.Interfaces;
 using CardMatching.Utilities;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ namespace CardMatching.Gameplay
         private readonly List<CardMatchCommand> _cardMatchCommandList = new ();
 
 
-        public void AddSelectedCardItem(GridBoxCardItem gridBoxCardItem)
+        public void AddSelectedCardItem(IGridBoxCardItem gridBoxCardItem)
         {
             CardMatchCommand cardMatchCommand = GetEmptySelectedCardPaid();
             cardMatchCommand.AddCard(gridBoxCardItem);

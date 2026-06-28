@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using CardMatching.Events;
-using CardMatching.GridBox;
+using CardMatching.Core.Events;
+using CardMatching.Core.Interfaces;
+using CardMatching.Gameplay.GridBox;
 using CardMatching.Utilities;
 using UnityEngine;
 
@@ -132,7 +133,7 @@ public static class AIAutoPlayTest
 
     }
 
-    private static void GameEvents_MatchingCard(GridBoxCardItem firstSelectedCardOne, GridBoxCardItem secondSelectedCard)
+    private static void GameEvents_MatchingCard(IGridBoxCardItem firstSelectedCardOne, IGridBoxCardItem secondSelectedCard)
     {
         SetEventHandlers(false);
         //CustomDebug.Log($"GameEvents_MatchingCard-_cardItemList: {_cardItemList.Count}, _attempCount:{_attempCount}");

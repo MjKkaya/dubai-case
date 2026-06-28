@@ -1,6 +1,9 @@
-public interface ICommand
+namespace CardMatching.Gameplay
 {
-    public void Execute();
+    public interface ICommand
+    {
+        public void Execute();
 
-    public void Undo();
+        public void Undo();
+    }
 }

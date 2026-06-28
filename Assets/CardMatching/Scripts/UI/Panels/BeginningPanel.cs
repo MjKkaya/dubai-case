@@ -1,0 +1,38 @@
+using CardMatching.Core.Events;
+using UnityEngine;
+using UnityEngine.UI;
+
+
+namespace CardMatching.UI.Panels
+{
+    public class BeginningPanel : BasePanel
+    {
+        [SerializeField] private Button _playButton;
+
+
+        protected override void Awake()
+        {
+            base.Awake();
+            _playButton.onClick.AddListener(OnClickedPlayButton);
+            GameEvents.GameOver += GameEvents_GameOver;
+        }
+
+        private void OnDestroy()
+        {
+            _playButton.onClick.RemoveListener(OnClickedPlayButton);
+            GameEvents.GameOver -= GameEvents_GameOver;
+        }
+
+
+        private void OnClickedPlayButton()
+        {
+            GameEvents.NewGameStarting?.Invoke();
+            HidePanel();
+        }
+
+        private void GameEvents_GameOver()
+        {
+            ShowPanel();
+        }
+    }
+}

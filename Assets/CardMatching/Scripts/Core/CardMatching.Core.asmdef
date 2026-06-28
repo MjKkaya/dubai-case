@@ -1,0 +1,16 @@
+{
+    "name": "CardMatching.Core",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3c5c62d02e9c84635b08df13307d0f10"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
