@@ -26,27 +26,31 @@ namespace CardMatching.Core.ScriptableObjects
 
         private IGridBoxCardItem[,] _gridBoxCardItems;
         private bool isGameCompleted; 
+        private GameEvents _gameEvents;
 
-
-        private void OnEnable()
+        
+        public void Initialize(GameEvents gameEvents)
         {
+            _gameEvents = gameEvents; 
             Reset();
-            GameEvents.NewGameStarting += GameEvents_NewGameStarting;
-            GameEvents.GameStarted += GameEvents_GameStarted;
-            GameEvents.MatchingCard += GameEvents_MatchingCard;
-            GameEvents.MismatchingCard += GameEvents_MismatchingCard;
-            GameEvents.EarnedPoint += GameEvents_EarnedPoint;
-            GameEvents.EarnedComboPoint += GameEvents_EarnedComboPoint;
+            _gameEvents.NewGameStarting += GameEvents_NewGameStarting;
+            _gameEvents.GameStarted += GameEvents_GameStarted;
+            _gameEvents.MatchingCard += GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            _gameEvents.EarnedPoint += GameEvents_EarnedPoint;
+            _gameEvents.EarnedComboPoint += GameEvents_EarnedComboPoint;
         }
-
-        private void OnDisable()
+        
+        public void Dispose()
         {
-            GameEvents.NewGameStarting += GameEvents_NewGameStarting;
-            GameEvents.GameStarted -= GameEvents_GameStarted;
-            GameEvents.MatchingCard -= GameEvents_MatchingCard;
-            GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
-            GameEvents.EarnedPoint -= GameEvents_EarnedPoint;
-            GameEvents.EarnedComboPoint -= GameEvents_EarnedComboPoint;
+            if (_gameEvents == null) 
+                return;
+            _gameEvents.NewGameStarting -= GameEvents_NewGameStarting;
+            _gameEvents.GameStarted -= GameEvents_GameStarted;
+            _gameEvents.MatchingCard -= GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+            _gameEvents.EarnedPoint -= GameEvents_EarnedPoint;
+            _gameEvents.EarnedComboPoint -= GameEvents_EarnedComboPoint;
         }
 
 
@@ -76,7 +80,7 @@ namespace CardMatching.Core.ScriptableObjects
             {
                 Reset();
                 isGameCompleted = true;
-                GameEvents.GameOver?.Invoke();
+                _gameEvents.GameOver?.Invoke();
             }
         }
 

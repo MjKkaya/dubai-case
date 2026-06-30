@@ -1,38 +1,39 @@
+using System;
 using CardMatching.Core.Events;
 using CardMatching.UI.Panels;
 using CardMatching.Core.ScriptableObjects;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 
 namespace CardMatching.UI
 {
-    public class PanelManager : MonoBehaviour
+    public class PanelManager : MonoBehaviour, IInitializable, IDisposable
     {
         [SerializeField] private BasePanel _beginningPanel;
         [SerializeField] private UnfinishedLevelProgressPanel _unfinishedLevelProgressPanel;
 
+        private UIEvents _uiEvents;
         
-        private void Awake()
+        
+        [Inject]
+        public void Construct(UIEvents uiEvents)
         {
-            SubscribeToEvents();
+            _uiEvents = uiEvents;
+        }
+        
+        
+        public void Initialize()
+        {
+            _uiEvents.BeginningPanelShow += UIEvents_BeginningPanelShow;
+            _uiEvents.UnfinishedLevelProgressPanelShow += UIEvents_UnfinishedLevelProgressPanelShow;
         }
 
-        private void OnDisable()
+        public void Dispose()
         {
-            UnsubscribeFromEvents();
-        }
-
-
-        private void SubscribeToEvents()
-        {
-            UIEvents.BeginningPanelShow += UIEvents_BeginningPanelShow;
-            UIEvents.UnfinishedLevelProgressPanelShow += UIEvents_UnfinishedLevelProgressPanelShow;
-        }
-
-        private void UnsubscribeFromEvents()
-        {
-            UIEvents.BeginningPanelShow -= UIEvents_BeginningPanelShow;
-            UIEvents.UnfinishedLevelProgressPanelShow -= UIEvents_UnfinishedLevelProgressPanelShow;
+            _uiEvents.BeginningPanelShow -= UIEvents_BeginningPanelShow;
+            _uiEvents.UnfinishedLevelProgressPanelShow -= UIEvents_UnfinishedLevelProgressPanelShow;
         }
 
 

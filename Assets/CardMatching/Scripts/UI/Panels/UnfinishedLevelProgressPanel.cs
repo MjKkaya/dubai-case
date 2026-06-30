@@ -2,6 +2,7 @@ using CardMatching.Core.Events;
 using CardMatching.Core.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 
 namespace CardMatching.UI.Panels
@@ -11,10 +12,11 @@ namespace CardMatching.UI.Panels
         [HideInInspector]
         public CurrentGameDataSO CurrentGameData;
 
-
         [SerializeField] private Button _continueButton;
         [SerializeField] private Button _newGameButton;
-
+        
+        private GameEvents _gameEvents;
+        
 
         protected override void Awake()
         {
@@ -22,6 +24,14 @@ namespace CardMatching.UI.Panels
             _continueButton.onClick.AddListener(OnClickedContinueButton);
             _newGameButton.onClick.AddListener(OnClickedNewGameButton);
         }
+        
+        [Inject]
+        public void Construct(GameEvents gameEvents)
+        {
+            _gameEvents = gameEvents;
+        }
+        
+
 
         private void OnDestroy()
         {
@@ -38,13 +48,13 @@ namespace CardMatching.UI.Panels
 
         private void OnClickedContinueButton()
         {
-            GameEvents.UnfinishedGameStarting?.Invoke(CurrentGameData);
+            _gameEvents.UnfinishedGameStarting?.Invoke(CurrentGameData);
             HidePanel();
         }
 
         private void OnClickedNewGameButton()
         {
-            GameEvents.NewGameStarting?.Invoke();
+            _gameEvents.NewGameStarting?.Invoke();
             HidePanel();
         }
     }

@@ -1,19 +1,28 @@
 using CardMatching.Core.Datas;
+using CardMatching.Core.Events;
 using CardMatching.Core.ScriptableObjects;
 using CardMatching.Utilities;
 using UnityEngine;
 using UnityEngine.Pool;
+using VContainer;
 
 
 namespace CardMatching.Gameplay.GridBox
 {
     public class GridBoxItemFactory : MonoBehaviour
     {
-        [SerializeField] private CardDataSO _cardDataSO;
+        [SerializeField] private CardSettingsSO _cardSettingsSo;
         [SerializeField] private GridBoxCardItem _prefabGridBoxCardItem;
 
         private ObjectPool<GridBoxCardItem> _gridBoxItemObjectPool;
+        private GameEvents _gameEvents;
 
+        [Inject]
+        public void Construct(GameEvents gameEvents)
+        {
+            _gameEvents = gameEvents;
+        }
+        
 
         void Awake()
         {
@@ -63,7 +72,7 @@ namespace CardMatching.Gameplay.GridBox
         {
             CustomDebug.Log($"{this}-GetGridBoxItem-CountAll:{_gridBoxItemObjectPool.CountAll}");
             GridBoxCardItem gridBoxItem = _gridBoxItemObjectPool.Get();
-            gridBoxItem.Init(gridBoxData, gridLocation);
+            gridBoxItem.Init(gridBoxData, gridLocation, _gameEvents, _cardSettingsSo);
             //gridBoxItem.Disappeared = GridBoxItem_Disappeared;
             return gridBoxItem;
         }

@@ -5,13 +5,9 @@ using UnityEngine;
 
 namespace CardMatching.Core.ScriptableObjects
 {
-    [CreateAssetMenu(fileName = "CardData", menuName = "CardMatching/CardData")]
-    public class CardDataSO : ScriptableObject
+    [CreateAssetMenu(fileName = "CardSettings", menuName = "CardMatching/CardSettings")]
+    public class CardSettingsSO : ScriptableObject
     {
-        //todo: this is not useful!!!
-        public static CardDataSO _instance;
-        public static CardDataSO Instance => _instance;
-
         public float FlipAniamtionTime = 0.25f;
         public Ease FlipAnimationEase = Ease.OutCubic;
 
@@ -20,11 +16,5 @@ namespace CardMatching.Core.ScriptableObjects
 
         [SerializeField] private List<Sprite> _cardIconList;
         public List<Sprite> CardIconList => _cardIconList;
-
-
-        private void OnEnable()
-        {
-            _instance = this;
-        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using CardMatching.Core.Datas;
 using CardMatching.Core.Events;
 using CardMatching.Core.ScriptableObjects;
@@ -6,12 +7,15 @@ using System.Collections;
 using System.Collections.Generic;
 using CardMatching.Core.Interfaces;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
+using Random = UnityEngine.Random;
 
 
 namespace CardMatching.Gameplay.GridBox
 {
     [RequireComponent(typeof(GridBoxItemFactory))]
-    public class GridBoxController : MonoBehaviour
+    public class GridBoxController : MonoBehaviour, IInitializable, IDisposable
     {
         private const int _minDimentionValue = 4;
         private const int _maxDimentionValue = 4;
@@ -28,24 +32,31 @@ namespace CardMatching.Gameplay.GridBox
         private readonly List<GridBoxCardData> _gridBoxCardItemDataList = new();
 
         private GridDimension _currentLevelGridAreaDimension;
+        private GameEvents _gameEvents;
 
-
-        private void OnEnable()
+        
+        [Inject]
+        public void Construct(GameEvents gameEvents)
         {
-            GameEvents.UnfinishedGameStarting += GameEvents_UnfinishedGameStarting;
-            GameEvents.NewGameStarting+= GameEvents_GameStarting;
-            GameEvents.MatchingCard += GameEvents_MatchingCard;
-            //GameEvents.MismatchingCard += GameEvents_MismatchingCard;
-            GameEvents.GameOver += GameEvents_GameOver;
+            _gameEvents = gameEvents;
         }
 
-        private void OnDisable()
+        public void Initialize()
         {
-            GameEvents.UnfinishedGameStarting -= GameEvents_UnfinishedGameStarting;
-            GameEvents.NewGameStarting -= GameEvents_GameStarting;
-            GameEvents.MatchingCard -= GameEvents_MatchingCard;
-            //GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
-            GameEvents.GameOver -= GameEvents_GameOver;
+            _gameEvents.UnfinishedGameStarting += GameEvents_UnfinishedGameStarting;
+            _gameEvents.NewGameStarting+= GameEvents_GameStarting;
+            _gameEvents.MatchingCard += GameEvents_MatchingCard;
+            //_gameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            _gameEvents.GameOver += GameEvents_GameOver;
+        }
+
+        public void Dispose()
+        {
+            _gameEvents.UnfinishedGameStarting -= GameEvents_UnfinishedGameStarting;
+            _gameEvents.NewGameStarting -= GameEvents_GameStarting;
+            _gameEvents.MatchingCard -= GameEvents_MatchingCard;
+            //_gameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+            _gameEvents.GameOver -= GameEvents_GameOver;
         }
 
 
@@ -54,7 +65,7 @@ namespace CardMatching.Gameplay.GridBox
             _currentLevelGridAreaDimension = new GridDimension(currentGameDataSO.GridAreaDimensionX, currentGameDataSO.GridAreaDimensionY);
             _gridBoxItemDataFactory.CreateCardDataListWithCurrentData(_gridBoxCardItemDataList, currentGameDataSO.IconIndexArray);
             CreateGridBoxItems(_gridBoxCardItemDataList);
-            GameEvents.GameStarted?.Invoke(_currentLevelGridAreaDimension, _gridBoxCardItems);
+            _gameEvents.GameStarted?.Invoke(_currentLevelGridAreaDimension, _gridBoxCardItems);
             SetCardItemInteracable(true);
             //StartCoroutine(ShowAllCardforShortTime()); //It was closed because player can abuse this situation.
         }
@@ -65,9 +76,9 @@ namespace CardMatching.Gameplay.GridBox
             int pairCount = _currentLevelGridAreaDimension.X * _currentLevelGridAreaDimension.Y / 2;
             FillGridBoxCardItemDataList(pairCount);
             CreateGridBoxItems(_gridBoxCardItemDataList);
-            GameEvents.GameStarted?.Invoke(_currentLevelGridAreaDimension, _gridBoxCardItems);
+            _gameEvents.GameStarted?.Invoke(_currentLevelGridAreaDimension, _gridBoxCardItems);
             StartCoroutine(ShowAllCardforShortTime());
-            //AIAutoPlayTest.StartTest(_gridBoxCardItems);
+            //AIAutoPlayTest.StartTest(_gridBoxCardItems, _gameEvents);
         }
 
         private GridDimension CreateRandomGridDimension()

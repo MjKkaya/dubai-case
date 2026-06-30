@@ -4,12 +4,12 @@ using CardMatching.Core.ScriptableObjects;
 
 namespace CardMatching.Core.Events
 {
-    public static class UIEvents
+    public class UIEvents
     {
         // Show the beginningPanel
-        public static Action BeginningPanelShow;
+        public Action BeginningPanelShow;
 
         // Show the UnfinishedLevelProgressPanel
-        public static Action<CurrentGameDataSO> UnfinishedLevelProgressPanelShow;
+        public Action<CurrentGameDataSO> UnfinishedLevelProgressPanelShow;
     }
 }

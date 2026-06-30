@@ -12,6 +12,8 @@ namespace CardMatching.Gameplay.GridBox
 {
     public class GridBoxCardItem : MonoBehaviour, IPointerClickHandler, IGridBoxCardItem
     {
+        private GameEvents _gameEvents;
+        
         private GridBoxCardData _gridBoxCardData;
         public GridBoxCardData GridBoxData
         {
@@ -68,6 +70,7 @@ namespace CardMatching.Gameplay.GridBox
         [SerializeField] private Image _displayImage;
         private CanvasGroup _canvasGroup;
         private bool _isOpen;
+        private CardSettingsSO _cardSettings;
 
 
         private void Awake()
@@ -77,11 +80,14 @@ namespace CardMatching.Gameplay.GridBox
         }
 
 
-        public void Init(GridBoxCardData gridBoxCardData, GridDimension gridLocation)
+        public void Init(GridBoxCardData gridBoxCardData, GridDimension gridLocation, GameEvents gameEvents,CardSettingsSO cardSettings)
         {
             _gridBoxCardData = gridBoxCardData;
             GridLocation = gridLocation;
             _isOpen = false;
+            _gameEvents = gameEvents;
+            _cardSettings = cardSettings;
+            
             SetInteraction(false);
             SetDisplayImageSprite();
         }
@@ -126,20 +132,20 @@ namespace CardMatching.Gameplay.GridBox
         public void StartFlipAniamtion()
         {
             //CustomDebug.Log($"StartFlipAniamtion-_isOpen: {_isOpen}");
-            transform.transform.DOScaleX(0.0f, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase).OnComplete(FlipAnimationSecondStep);
+            transform.transform.DOScaleX(0.0f, _cardSettings.FlipAniamtionTime).SetEase(_cardSettings.FlipAnimationEase).OnComplete(FlipAnimationSecondStep);
         }
 
         private void FlipAnimationSecondStep()
         {
             _isOpen = !_isOpen;
             SetDisplayImageSprite();
-            transform.transform.DOScaleX(1.0f, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase).OnComplete(OnCompletedFlipAnimation);
+            transform.transform.DOScaleX(1.0f, _cardSettings.FlipAniamtionTime).SetEase(_cardSettings.FlipAnimationEase).OnComplete(OnCompletedFlipAnimation);
         }
 
         private void OnCompletedFlipAnimation()
         {
             if(_isOpen)
-                GameEvents.CardFlipped?.Invoke(this);
+                _gameEvents.CardFlipped?.Invoke(this);
             else
                 SetInteraction(true);
         }
@@ -147,7 +153,7 @@ namespace CardMatching.Gameplay.GridBox
 
         private void StartFadeAnimation()
         {
-            _canvasGroup.DOFade(0, CardDataSO.Instance.FlipAniamtionTime).SetEase(CardDataSO.Instance.FlipAnimationEase).OnComplete(OnCompletedFadeAnimation);
+            _canvasGroup.DOFade(0, _cardSettings.FlipAniamtionTime).SetEase(_cardSettings.FlipAnimationEase).OnComplete(OnCompletedFadeAnimation);
         }
 
         private void OnCompletedFadeAnimation()
@@ -165,7 +171,7 @@ namespace CardMatching.Gameplay.GridBox
         {
             SetInteraction(false);
             StartFlipAniamtion();
-            GameEvents.CardSelected?.Invoke();
+            _gameEvents.CardSelected?.Invoke();
         }
     }
 }

@@ -1,36 +1,42 @@
+using System;
 using CardMatching.Core.Events;
 using CardMatching.Core.Interfaces;
 using UnityEngine;
+using VContainer.Unity;
 
 
 namespace CardMatching.Gameplay
 {
-    public class ScoreManager : MonoBehaviour
+    public class ScoreManager : IInitializable, IDisposable
     {
         private const float _comboPoint = 10;
         private const float _correctAnswerPoint = 5;
 
         [Tooltip("This is the minimum correct answers in a row to get Combo point")]
-        [Range(2, 5)]
-        [SerializeField] private int _minimumStreak = 2;
+        private readonly int _minimumStreak = 2;
 
         private int _currentStreak;
+        private readonly GameEvents _gameEvents;
 
-
-        private void OnEnable()
+        public ScoreManager(int minimumStreak, GameEvents gameEvents)
         {
-            GameEvents.NewGameStarting += GameEvents_GameStarting;
-            GameEvents.MatchingCard += GameEvents_MatchingCard;
-            GameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            _minimumStreak = minimumStreak;
+            _gameEvents = gameEvents;
         }
-
-        private void OnDisable()
+        
+        public void Initialize()
         {
-            GameEvents.NewGameStarting -= GameEvents_GameStarting;
-            GameEvents.MatchingCard -= GameEvents_MatchingCard;
-            GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+            _gameEvents.NewGameStarting += GameEvents_GameStarting;
+            _gameEvents.MatchingCard += GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
         }
-
+        public void Dispose()
+        {
+            _gameEvents.NewGameStarting -= GameEvents_GameStarting;
+            _gameEvents.MatchingCard -= GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+        }
+        
 
         private void GameEvents_GameStarting()
         {
@@ -40,10 +46,10 @@ namespace CardMatching.Gameplay
         private void GameEvents_MatchingCard(IGridBoxCardItem firstSelectedCardOne, IGridBoxCardItem secondSelectedCard)
         {
             _currentStreak++;
-            GameEvents.EarnedPoint?.Invoke(_correctAnswerPoint);
+            _gameEvents.EarnedPoint?.Invoke(_correctAnswerPoint);
 
             if(_currentStreak > _minimumStreak)
-                GameEvents.EarnedComboPoint?.Invoke(_comboPoint);
+                _gameEvents.EarnedComboPoint?.Invoke(_comboPoint);
         }
 
         private void GameEvents_MismatchingCard()

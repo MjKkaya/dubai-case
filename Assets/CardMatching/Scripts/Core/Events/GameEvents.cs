@@ -6,24 +6,24 @@ using CardMatching.Core.Interfaces;
 
 namespace CardMatching.Core.Events
 {
-    public static class GameEvents
+    public class GameEvents
     {
         //Prepare new game with unfinished game data;
-        public static Action<CurrentGameDataSO> UnfinishedGameStarting;
-        public static Action NewGameStarting;
+        public Action<CurrentGameDataSO> UnfinishedGameStarting;
+        public Action NewGameStarting;
 
         //It returns the grid are dimension.
-        public static Action<GridDimension, IGridBoxCardItem[,]> GameStarted;
+        public Action<GridDimension, IGridBoxCardItem[,]> GameStarted;
 
         //It's return selected card icon index number.
-        public static Action CardSelected;
-        public static Action<IGridBoxCardItem> CardFlipped;
-        public static Action StartedCardMatchingControl;
-        public static Action<IGridBoxCardItem, IGridBoxCardItem> MatchingCard;
-        public static Action MismatchingCard;
-        public static Action GameOver;
+        public Action CardSelected;
+        public Action<IGridBoxCardItem> CardFlipped;
+        public Action StartedCardMatchingControl;
+        public Action<IGridBoxCardItem, IGridBoxCardItem> MatchingCard;
+        public Action MismatchingCard;
+        public Action GameOver;
 
-        public static Action<float> EarnedPoint;
-        public static Action<float> EarnedComboPoint;
+        public Action<float> EarnedPoint;
+        public Action<float> EarnedComboPoint;
     }
 }

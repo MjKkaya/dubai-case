@@ -8,7 +8,7 @@ using UnityEngine.Pool;
 
 public class GridBoxItemDataFactory : MonoBehaviour
 {
-    [SerializeField] private CardDataSO _cardDataSO;
+    [SerializeField] private CardSettingsSO _cardSettingsSo;
 
     private ObjectPool<GridBoxCardData> _gridBoxItemDataPool;
 
@@ -37,14 +37,14 @@ public class GridBoxItemDataFactory : MonoBehaviour
     // Called when an item is taken from the pool using Get
     void OnTakeFromPool(GridBoxCardData cardData)
     {
-        CustomDebug.Log($"{this}-OnTakeFromPool-cardData:{cardData}");
+        CustomDebug.Log($"{this}-OnTakeFromPool-cardSettings:{cardData}");
         cardData.Clear();
     }
 
     // Called when an item is returned to the pool using Release
     void OnReturnedToPool(GridBoxCardData cardData)
     {
-        CustomDebug.Log($"{this}-OnReturnedToPool-cardData:{cardData}");
+        CustomDebug.Log($"{this}-OnReturnedToPool-cardSettings:{cardData}");
         cardData.Clear();
     }
 
@@ -52,7 +52,7 @@ public class GridBoxItemDataFactory : MonoBehaviour
     // We can control what the destroy behavior does, here we destroy the GameObject.
     void OnDestroyPoolObject(GridBoxCardData cardData)
     {
-        CustomDebug.Log($"{this}-OnDestroyPoolObject-cardData:{cardData}");
+        CustomDebug.Log($"{this}-OnDestroyPoolObject-cardSettings:{cardData}");
         cardData.Clear();
     }
 
@@ -66,7 +66,7 @@ public class GridBoxItemDataFactory : MonoBehaviour
 
     public void ReleaseGridBoxItemData(GridBoxCardData cardData)
     {
-        CustomDebug.Log($"{this}-ReleaseGridBoxItemData-CountAll:{_gridBoxItemDataPool.CountAll}, cardData:{cardData.CardIconIndex}");
+        CustomDebug.Log($"{this}-ReleaseGridBoxItemData-CountAll:{_gridBoxItemDataPool.CountAll}, cardSettings:{cardData.CardIconIndex}");
         _gridBoxItemDataPool.Release(cardData);
     }
 
@@ -75,7 +75,7 @@ public class GridBoxItemDataFactory : MonoBehaviour
 
     public void CreateCardDataListForCurrentLevel(List<GridBoxCardData> dataList, int pairCount)
     {
-        int allCardIconCount = _cardDataSO.CardIconList.Count;
+        int allCardIconCount = _cardSettingsSo.CardIconList.Count;
 
         List<int> iconIndexList = new();
         for (int i = 0; i < allCardIconCount; i++)
@@ -108,7 +108,7 @@ public class GridBoxItemDataFactory : MonoBehaviour
                 for (int k = 0; k < allCardIconCount; k++)
                 {
                     GridBoxCardData gridBoxCardData = GetGridBoxItemData();
-                    gridBoxCardData.Set(k, _cardDataSO.CardIconList[k], _cardDataSO.CardCoverSprite);
+                    gridBoxCardData.Set(k, _cardSettingsSo.CardIconList[k], _cardSettingsSo.CardCoverSprite);
                     dataList.Add(gridBoxCardData);
                 }
             }
@@ -120,7 +120,7 @@ public class GridBoxItemDataFactory : MonoBehaviour
             randomIndex = Random.Range(0, iconIndexList.Count);
 
             GridBoxCardData gridBoxCardData = GetGridBoxItemData();
-            gridBoxCardData.Set(iconIndexList[randomIndex], _cardDataSO.CardIconList[iconIndexList[randomIndex]], _cardDataSO.CardCoverSprite);
+            gridBoxCardData.Set(iconIndexList[randomIndex], _cardSettingsSo.CardIconList[iconIndexList[randomIndex]], _cardSettingsSo.CardCoverSprite);
             dataList.Add(gridBoxCardData);
 
             iconIndexList.RemoveAt(randomIndex);
@@ -139,7 +139,7 @@ public class GridBoxItemDataFactory : MonoBehaviour
             if (iconIndex == GridBoxCardData.EmptyIndexNo)
                 dataList.Add(new GridBoxCardData(iconIndex, null, null));
             else
-                dataList.Add(new GridBoxCardData(iconIndex, _cardDataSO.CardIconList[iconIndex], _cardDataSO.CardCoverSprite));
+                dataList.Add(new GridBoxCardData(iconIndex, _cardSettingsSo.CardIconList[iconIndex], _cardSettingsSo.CardCoverSprite));
         }
     }
 }

@@ -1,62 +1,68 @@
+using System;
 using CardMatching.Core.Events;
 using CardMatching.Core.Interfaces;
-using UnityEngine;
+using CardMatching.Core.ScriptableObjects;
+using VContainer.Unity;
 
 
 namespace CardMatching.Infrastructure.Audio
 {
-    [RequireComponent(typeof(AudioManager))]
-    public class GameplaySounds : MonoBehaviour
+    public class GameplaySounds : IInitializable, IDisposable
     {
-        [Tooltip("Required AudioManager component")]
-        [SerializeField] AudioManager _audioManager;
+        private readonly IAudioService _audioService;
+        private readonly AudioSettingsSO _audioSettings;
+        private readonly GameEvents _gameEvents;
 
-
-        private void OnEnable()
+        
+        public GameplaySounds(IAudioService audioService, AudioSettingsSO audioSettings, GameEvents gameEvents)
         {
-            GameEvents.CardSelected += GameEvents_CardSelected;
-            GameEvents.MatchingCard += GameEvents_MatchingCard;
-            GameEvents.MismatchingCard += GameEvents_MismatchingCard;
-            GameEvents.GameOver += GameEvents_GameOver;
+            _audioService = audioService;
+            _audioSettings = audioSettings;
+            _gameEvents = gameEvents;
+        }
+        
+        
+        public void Initialize()
+        {
+            _gameEvents.CardSelected += GameEvents_CardSelected;
+            _gameEvents.MatchingCard += GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            _gameEvents.GameOver += GameEvents_GameOver;
         }
 
-        private void OnDisable()
+        public void Dispose()
         {
-            GameEvents.CardSelected -= GameEvents_CardSelected;
-            GameEvents.MatchingCard -= GameEvents_MatchingCard;
-            GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
-            GameEvents.GameOver -= GameEvents_GameOver;
-        }
-
-        private void Start()
-        {
-            if (_audioManager == null)
-                _audioManager = GetComponent<AudioManager>();
+            _gameEvents.CardSelected -= GameEvents_CardSelected;
+            _gameEvents.MatchingCard -= GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+            _gameEvents.GameOver -= GameEvents_GameOver;
         }
 
 
         // Play the flipping card sound effect
         private void GameEvents_CardSelected()
         {
-            _audioManager.PlaySFX(_audioManager.AudioSettingsData.FlippingCardSound);
+            _audioService.PlaySFX(_audioSettings.FlippingCardSound);
         }
 
         // Play the matching card sound effect
         private void GameEvents_MatchingCard(IGridBoxCardItem firstSelectedCardOne, IGridBoxCardItem secondSelectedCard)
         {
-            _audioManager.PlaySFX(_audioManager.AudioSettingsData.MatchingCardSound);
+            _audioService.PlaySFX(_audioSettings.MatchingCardSound);
         }
 
         // Play the mismatching card sound effect
         private void GameEvents_MismatchingCard()
         {
-            _audioManager.PlaySFX(_audioManager.AudioSettingsData.MismatchingCardSound);
+            _audioService.PlaySFX(_audioSettings.MismatchingCardSound);
         }
 
         // Play the game over sound effect
         private void GameEvents_GameOver()
         {
-            _audioManager.PlaySFX(_audioManager.AudioSettingsData.GameOverSound);
+            _audioService.PlaySFX(_audioSettings.GameOverSound);
         }
+
+        
     }
 }

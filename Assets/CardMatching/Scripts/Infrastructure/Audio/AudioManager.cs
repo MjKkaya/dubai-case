@@ -1,17 +1,11 @@
-using CardMatching.Core.ScriptableObjects;
+using CardMatching.Core.Interfaces;
 using UnityEngine;
 
 
 namespace CardMatching.Infrastructure.Audio
 {
-    public class AudioManager : MonoBehaviour
+    public class AudioManager : MonoBehaviour, IAudioService
     {
-        public AudioSettingsSO AudioSettingsData => _audioSettingsData;
-
-
-        [Tooltip("AudioSettings ScriptableObject storing sounds data and volume settings")]
-        [SerializeField] AudioSettingsSO _audioSettingsData;
-
         [SerializeField] AudioSource _audioSource;
 
 

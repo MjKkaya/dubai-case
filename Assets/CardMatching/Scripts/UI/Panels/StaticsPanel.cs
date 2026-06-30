@@ -3,6 +3,7 @@ using CardMatching.Core.Interfaces;
 using UnityEngine;
 using TMPro;
 using CardMatching.Core.ScriptableObjects;
+using VContainer;
 
 
 namespace CardMatching.UI.Panels
@@ -43,25 +44,34 @@ namespace CardMatching.UI.Panels
         [SerializeField] private TextMeshProUGUI _turnsText;
         [SerializeField] private TextMeshProUGUI _scoreText;
 
-
-        private void OnEnable()
+        
+        private GameEvents _gameEvents;
+        
+        [Inject]
+        public void Construct(GameEvents gameEvents)
         {
-            GameEvents.UnfinishedGameStarting += GameEvents_UnfinishedGameStarting;
-            GameEvents.NewGameStarting += GameEvents_NewGameStarting;
-            GameEvents.MatchingCard += GameEvents_MatchingCard;
-            GameEvents.MismatchingCard += GameEvents_MismatchingCard;
-            GameEvents.EarnedPoint += GameEvents_EarnedPoint;
-            GameEvents.EarnedComboPoint += GameEvents_EarnedComboPoint;
+            _gameEvents = gameEvents;
+            
+            _gameEvents.UnfinishedGameStarting += GameEvents_UnfinishedGameStarting;
+            _gameEvents.NewGameStarting += GameEvents_NewGameStarting;
+            _gameEvents.MatchingCard += GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            _gameEvents.EarnedPoint += GameEvents_EarnedPoint;
+            _gameEvents.EarnedComboPoint += GameEvents_EarnedComboPoint;
         }
 
-        private void OnDisable()
+
+        private void OnDestroy()
         {
-            GameEvents.UnfinishedGameStarting -= GameEvents_UnfinishedGameStarting;
-            GameEvents.NewGameStarting -= GameEvents_NewGameStarting;
-            GameEvents.MatchingCard += GameEvents_MatchingCard;
-            GameEvents.MismatchingCard += GameEvents_MismatchingCard;
-            GameEvents.EarnedPoint -= GameEvents_EarnedPoint;
-            GameEvents.EarnedComboPoint -= GameEvents_EarnedComboPoint;
+            if(_gameEvents == null)
+                return;
+            
+            _gameEvents.UnfinishedGameStarting -= GameEvents_UnfinishedGameStarting;
+            _gameEvents.NewGameStarting -= GameEvents_NewGameStarting;
+            _gameEvents.MatchingCard += GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            _gameEvents.EarnedPoint -= GameEvents_EarnedPoint;
+            _gameEvents.EarnedComboPoint -= GameEvents_EarnedComboPoint;
         }
 
 

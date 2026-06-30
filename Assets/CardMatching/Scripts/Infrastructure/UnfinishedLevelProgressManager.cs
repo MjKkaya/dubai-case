@@ -1,55 +1,60 @@
+using System;
 using CardMatching.Core.Events;
 using CardMatching.Core.ScriptableObjects;
 using CardMatching.Utilities;
 using UnityEngine;
+using VContainer.Unity;
 
 
 namespace CardMatching.Infrastructure
 {
-    public class UnfinishedLevelProgressManager: MonoBehaviour
+    public class UnfinishedLevelProgressManager: IStartable, IDisposable
     {
         private const string _unfinishedGameDataKey = "unfinished-game-data";
 
-        [SerializeField] private CurrentGameDataSO currentGameData;
-
-
-        private void OnEnable()
+        private readonly CurrentGameDataSO _currentGameData;
+        private readonly GameEvents _gameEvents;
+        private readonly UIEvents _uiEvents;
+        
+        public UnfinishedLevelProgressManager(CurrentGameDataSO currentGameData, GameEvents gameEvents, UIEvents uiEvents)
         {
-            GameEvents.NewGameStarting += GameEvents_GameStarting;
-            GameEvents.GameOver += GameEvents_GameOver;
+            _currentGameData = currentGameData;
+            _gameEvents = gameEvents;
+            _uiEvents = uiEvents;
         }
-
-        private void OnDisable()
+        
+        public void Start()
         {
-            GameEvents.NewGameStarting -= GameEvents_GameStarting;
-            GameEvents.GameOver -= GameEvents_GameOver;
-        }
-
-
-        private void Start()
-        {
+            _gameEvents.NewGameStarting += GameEvents_GameStarting;
+            _gameEvents.GameOver += GameEvents_GameOver;
+            
             LoadLastUnfinishedGameData();
-            if (currentGameData.TurnCount > 0)
-                UIEvents.UnfinishedLevelProgressPanelShow?.Invoke(currentGameData);
+            if (_currentGameData.TurnCount > 0)
+                _uiEvents.UnfinishedLevelProgressPanelShow?.Invoke(_currentGameData);
             else
-                UIEvents.BeginningPanelShow?.Invoke();
+                _uiEvents.BeginningPanelShow?.Invoke();
         }
-
-        private void OnApplicationQuit()
+        
+        public void Dispose()
         {
-            CustomDebug.Log($"{this}-OnApplicationQuit-TurnCount:{currentGameData.TurnCount}");
-            if (currentGameData.TurnCount > 0)
+            CustomDebug.Log($"{this}-Dispose (OnApplicationQuit yerine)-TurnCount:{_currentGameData.TurnCount}");
+            if (_currentGameData.TurnCount > 0)
             {
-                currentGameData.PrepareOneDimensionArray();
+                _currentGameData.PrepareOneDimensionArray();
                 SaveLastUnfinishedGameData();
             }
+           
+            if (_gameEvents == null) 
+                return;
+            _gameEvents.NewGameStarting -= GameEvents_GameStarting;
+            _gameEvents.GameOver -= GameEvents_GameOver;
         }
-
+        
 
         private void SaveLastUnfinishedGameData()
         {
             CustomDebug.Log($"{this}-SaveLastUnfinishedGameData");
-            PlayerPrefs.SetString(_unfinishedGameDataKey, JsonUtility.ToJson(currentGameData));
+            PlayerPrefs.SetString(_unfinishedGameDataKey, JsonUtility.ToJson(_currentGameData));
             PlayerPrefs.Save();
         }
 
@@ -57,7 +62,7 @@ namespace CardMatching.Infrastructure
         {
             string data = PlayerPrefs.GetString(_unfinishedGameDataKey, null);
             if(!string.IsNullOrEmpty(data))
-                JsonUtility.FromJsonOverwrite(data, currentGameData);
+                JsonUtility.FromJsonOverwrite(data, _currentGameData);
         }
 
         private void DeleteUnfinishedGameData()

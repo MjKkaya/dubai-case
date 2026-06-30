@@ -9,6 +9,8 @@ using UnityEngine;
 
 public static class AIAutoPlayTest
 {
+    private static GameEvents _gameEvents;
+    
     //private static PointerEventData pointerEventData;
     private static List<GridBoxCardItem> _cardItemList = new ();
     private static GridBoxCardItem _selectedFirstCard;
@@ -19,9 +21,9 @@ public static class AIAutoPlayTest
     private static int _attempCount;
 
 
-
-    public static void StartTest(GridBoxCardItem[,] _gridBoxCardItems)
+    public static void StartTest(GridBoxCardItem[,] _gridBoxCardItems, GameEvents gameEvents)
     {
+        _gameEvents = gameEvents;
         _cardItemList.Clear();
 
         // access to CardItem object list - this for open card onthe screen
@@ -122,15 +124,14 @@ public static class AIAutoPlayTest
     {
         if(isActive)
         {
-            GameEvents.MatchingCard += GameEvents_MatchingCard;
-            GameEvents.MismatchingCard += GameEvents_MismatchingCard;
+            _gameEvents.MatchingCard += GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
         }
         else
         {
-            GameEvents.MatchingCard -= GameEvents_MatchingCard;
-            GameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+            _gameEvents.MatchingCard -= GameEvents_MatchingCard;
+            _gameEvents.MismatchingCard -= GameEvents_MismatchingCard;
         }
-
     }
 
     private static void GameEvents_MatchingCard(IGridBoxCardItem firstSelectedCardOne, IGridBoxCardItem secondSelectedCard)

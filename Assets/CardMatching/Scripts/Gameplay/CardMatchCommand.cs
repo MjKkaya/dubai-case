@@ -10,7 +10,14 @@ namespace CardMatching.Gameplay
     {
         private GridBoxCardItem _firstSelectedItem;
         private GridBoxCardItem _secondSelectedItem;
+        private readonly GameEvents _gameEvents;
 
+        
+        public CardMatchCommand(GameEvents gameEvents)
+        {
+            _gameEvents = gameEvents;
+        }
+        
 
         public void AddCard(IGridBoxCardItem selectedItemData)
         {
@@ -44,13 +51,13 @@ namespace CardMatching.Gameplay
         {
             if (IsMatch())
             {
-                GameEvents.MatchingCard?.Invoke(_firstSelectedItem, _secondSelectedItem);
+                _gameEvents.MatchingCard?.Invoke(_firstSelectedItem, _secondSelectedItem);
             }
             else
             {
                 _firstSelectedItem.StartFlipAniamtion();
                 _secondSelectedItem.StartFlipAniamtion();
-                GameEvents.MismatchingCard?.Invoke();
+                _gameEvents.MismatchingCard?.Invoke();
             }
         }
 

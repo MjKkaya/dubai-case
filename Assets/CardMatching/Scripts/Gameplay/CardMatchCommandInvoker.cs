@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CardMatching.Core.Events;
 using CardMatching.Core.Interfaces;
 using CardMatching.Utilities;
 using UnityEngine;
@@ -6,13 +7,20 @@ using UnityEngine;
 
 namespace CardMatching.Gameplay
 {
-    public class CardMatchCommandInvoker : MonoBehaviour
+    public class CardMatchCommandInvoker
     {
         private readonly Stack<ICommand> _undoStack = new ();
         private readonly Stack<ICommand> _redoStack = new ();
         private readonly List<CardMatchCommand> _cardMatchCommandList = new ();
 
-
+        private readonly GameEvents _gameEvents;
+        
+        public CardMatchCommandInvoker(GameEvents gameEvents)
+        {
+            _gameEvents = gameEvents;
+        }
+        
+        
         public void AddSelectedCardItem(IGridBoxCardItem gridBoxCardItem)
         {
             CardMatchCommand cardMatchCommand = GetEmptySelectedCardPaid();
@@ -41,7 +49,7 @@ namespace CardMatching.Gameplay
                     return cardMatchCommand;
             }
 
-            cardMatchCommand = new CardMatchCommand();
+            cardMatchCommand = new CardMatchCommand(_gameEvents);
             _cardMatchCommandList.Add(cardMatchCommand);
 
             //CustomDebug.Log($"CardMatchCommandController-GetEmptySelectedCardPaid:{_cardMatchCommandList.Count}");
