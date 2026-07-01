@@ -25,5 +25,8 @@ namespace CardMatching.Core.Events
 
         public Action<float> EarnedPoint;
         public Action<float> EarnedComboPoint;
+        
+        // Mobil cihazlarda arka plana atılma durumu
+        public Action<bool> ApplicationPaused;
     }
 }

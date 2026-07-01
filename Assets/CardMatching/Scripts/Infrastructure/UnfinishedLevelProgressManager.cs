@@ -25,8 +25,10 @@ namespace CardMatching.Infrastructure
         
         public void Start()
         {
+            Application.quitting += SaveOnQuit; 
             _gameEvents.NewGameStarting += GameEvents_GameStarting;
             _gameEvents.GameOver += GameEvents_GameOver;
+            _gameEvents.ApplicationPaused += GameEvents_ApplicationPaused;
             
             LoadLastUnfinishedGameData();
             if (_currentGameData.TurnCount > 0)
@@ -37,17 +39,14 @@ namespace CardMatching.Infrastructure
         
         public void Dispose()
         {
-            CustomDebug.Log($"{this}-Dispose (OnApplicationQuit yerine)-TurnCount:{_currentGameData.TurnCount}");
-            if (_currentGameData.TurnCount > 0)
+            Application.quitting -= SaveOnQuit;
+
+            if (_gameEvents != null)
             {
-                _currentGameData.PrepareOneDimensionArray();
-                SaveLastUnfinishedGameData();
+                _gameEvents.NewGameStarting -= GameEvents_GameStarting;
+                _gameEvents.GameOver -= GameEvents_GameOver;
+                _gameEvents.ApplicationPaused -= GameEvents_ApplicationPaused;
             }
-           
-            if (_gameEvents == null) 
-                return;
-            _gameEvents.NewGameStarting -= GameEvents_GameStarting;
-            _gameEvents.GameOver -= GameEvents_GameOver;
         }
         
 
@@ -79,6 +78,22 @@ namespace CardMatching.Infrastructure
         private void GameEvents_GameOver()
         {
             DeleteUnfinishedGameData();
+        }
+        
+        private void SaveOnQuit()
+        {
+            CustomDebug.Log($"{this}-SaveOnQuit-TurnCount:{_currentGameData.TurnCount}");
+            if (_currentGameData.TurnCount > 0)
+            {
+                _currentGameData.PrepareOneDimensionArray();
+                SaveLastUnfinishedGameData();
+            }
+        }
+        
+        private void GameEvents_ApplicationPaused(bool isPaused)
+        {
+            if (isPaused)
+                SaveOnQuit();
         }
     }
 }

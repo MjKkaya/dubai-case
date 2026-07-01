@@ -81,6 +81,16 @@ namespace CardMatching.Setup
             
         }
         
+        
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (Container != null)
+            {
+                var gameEvents = Container.Resolve<GameEvents>();
+                gameEvents.ApplicationPaused?.Invoke(pauseStatus);
+            }
+        }
+        
         // ÖNEMLİ: Scope scripti kapanırken SO'daki eventleri temizleyelim (Memory Leak olmasın)
         protected override void OnDestroy()
         {
