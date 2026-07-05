@@ -25,6 +25,9 @@
 # Visual Studio cache directory
 .vs/
 
+# Gemine Agent
+.agents/
+
 # Gradle cache directory
 .gradle/
 
