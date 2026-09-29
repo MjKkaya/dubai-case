@@ -1,0 +1,13 @@
+﻿<Solution>
+  <Project Path="Unity.PlayerPrefsEditor.Editor.csproj" />
+  <Project Path="CardMatching.Infrastructure.csproj" />
+  <Project Path="CardMatching.UI.csproj" />
+  <Project Path="CardMatching.Core.csproj" />
+  <Project Path="DOTween.Modules.csproj" />
+  <Project Path="CardMatching.Gameplay.csproj" />
+  <Project Path="CardMatching.Utilities.csproj" />
+  <Project Path="CardMatching.Tests.csproj" />
+  <Project Path="Unity.PlayerPrefsEditor.EditorResources.csproj" />
+  <Project Path="Unity.PlayerPrefsEditor.Samples.SampleScene.csproj" />
+  <Project Path="CardMatching.Setup.csproj" />
+</Solution>
