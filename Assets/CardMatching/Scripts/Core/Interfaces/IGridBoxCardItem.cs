@@ -1,4 +1,4 @@
-using CardMatching.Core.Datas;
+using CardMatching.Core.Settings;
 
 
 namespace CardMatching.Core.Interfaces

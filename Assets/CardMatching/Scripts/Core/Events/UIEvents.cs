@@ -1,5 +1,5 @@
 using System;
-using CardMatching.Core.ScriptableObjects;
+using CardMatching.Core.Settings;
 
 
 namespace CardMatching.Core.Events

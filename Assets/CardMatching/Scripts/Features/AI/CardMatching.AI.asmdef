@@ -1,0 +1,17 @@
+{
+    "name": "CardMatching.AI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b1474f6097aa6463fb65a036a878f391",
+        "GUID:03017eb97e752417a9f5e67c6dfa7d60"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

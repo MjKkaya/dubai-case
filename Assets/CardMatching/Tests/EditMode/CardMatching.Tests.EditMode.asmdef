@@ -4,8 +4,8 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "CardMatching.Gameplay",
-        "CardMatching.Core"
+        "CardMatching.Core",
+        "CardMatching.ScoreSystem"
     ],
     "includePlatforms": [
         "Editor"

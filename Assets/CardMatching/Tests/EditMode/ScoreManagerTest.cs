@@ -1,6 +1,6 @@
 using NUnit.Framework;
-using CardMatching.Gameplay;
 using CardMatching.Core.Events;
+using CardMatching.Features.Scoresystem.Controllers;
 
 
 namespace CardMatching.Tests.EditMode

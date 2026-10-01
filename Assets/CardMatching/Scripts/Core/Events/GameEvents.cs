@@ -1,7 +1,6 @@
-using CardMatching.Core.Datas;
-using CardMatching.Core.ScriptableObjects;
 using System;
 using CardMatching.Core.Interfaces;
+using CardMatching.Core.Settings;
 
 
 namespace CardMatching.Core.Events

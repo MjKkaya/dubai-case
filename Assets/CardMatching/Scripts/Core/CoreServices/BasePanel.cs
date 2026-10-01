@@ -1,0 +1,41 @@
+using UnityEngine;
+using VContainer.Unity;
+
+
+namespace CardMatching.Core.CoreServices
+{
+    [RequireComponent(typeof(CanvasGroup))]
+    public abstract class BasePanel : MonoBehaviour, IInitializable
+    {
+        private CanvasGroup _canvasGroup;
+
+
+        protected virtual void Awake()
+        {
+            _canvasGroup = GetComponent<CanvasGroup>();
+            HidePanel();
+        }
+
+        public virtual void Initialize()
+        {
+            
+        }
+
+
+        public virtual void HidePanel()
+        {
+            _canvasGroup.interactable = false;
+            _canvasGroup.alpha = 0;
+            _canvasGroup.blocksRaycasts = false;
+        }
+
+        public virtual void ShowPanel()
+        {
+            _canvasGroup.interactable = true;
+            _canvasGroup.alpha = 1;
+            _canvasGroup.blocksRaycasts = true;
+        }
+
+        
+    }
+}

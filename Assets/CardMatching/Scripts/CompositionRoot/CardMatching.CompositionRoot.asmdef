@@ -1,0 +1,21 @@
+{
+    "name": "CardMatching.CompositionRoot",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
+        "GUID:b1474f6097aa6463fb65a036a878f391",
+        "GUID:4eb3802deb0c749db89f13b0f71ac2ac",
+        "GUID:af0c3387d3a514783891b6214c03baf6",
+        "GUID:03017eb97e752417a9f5e67c6dfa7d60",
+        "GUID:bcece19c151d743cc8c0a2eccb435708"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
