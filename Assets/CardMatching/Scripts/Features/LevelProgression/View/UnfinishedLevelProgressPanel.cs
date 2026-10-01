@@ -62,7 +62,7 @@ namespace CardMatching.Features.LevelProgression.View
 
         private void OnClickedNewGameButton()
         {
-            _gameEvents.NewGameStarting?.Invoke();
+            _uiEvents.NewGameRequested?.Invoke();
             HidePanel();
         }
 

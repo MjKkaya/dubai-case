@@ -82,7 +82,7 @@ namespace CardMatching.Features.LevelProgression.Services
         
         private void SaveOnQuit()
         {
-            CustomDebug.Log($"{this}-SaveOnQuit-TurnCount:{_currentGameData.TurnCount}");
+            CustomDebug.Log($"{this}-SaveOnQuit-TurnCount:{_currentGameData.TurnCount}/{_currentGameData.IsGameRunning}");
             if (_currentGameData.IsGameRunning)
             {
                 _currentGameData.PrepareOneDimensionArray();

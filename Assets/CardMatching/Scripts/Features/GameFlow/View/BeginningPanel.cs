@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using VContainer;
 
 
-namespace CardMatching.GameFlow.View
+namespace CardMatching.Features.GameFlow.View
 {
     public class BeginningPanel : BasePanel
     {
@@ -55,7 +55,7 @@ namespace CardMatching.GameFlow.View
 
         private void OnClickedPlayButton()
         {
-            _gameEvents.NewGameStarting?.Invoke();
+            _uiEvents.NewGameRequested?.Invoke();
             HidePanel();
         }
 

@@ -6,7 +6,7 @@ using VContainer;
 using CardMatching.Core.Settings;
 
 
-namespace CardMatching.GameFlow.View
+namespace CardMatching.Features.GameFlow.View
 {
     public class StaticsPanel : MonoBehaviour
     {

@@ -6,11 +6,12 @@ using CardMatching.Features.LevelProgression.Services;
 using CardMatching.Features.LevelProgression.View;
 using CardMatching.Features.MatchMechanic.Controllers;
 using CardMatching.Features.MatchMechanic.View;
-using CardMatching.Features.Scoresystem.Controllers;
-using CardMatching.GameFlow.View;
+using CardMatching.Features.ScoreSystem.Controllers;
+using CardMatching.Features.GameFlow.View;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using CardMatching.Features.GameFlow.Controllers;
 
 
 namespace CardMatching.CompositionRoot
@@ -47,6 +48,7 @@ namespace CardMatching.CompositionRoot
             // --- CORE DATAS ---
             builder.RegisterInstance(_currentGameData);
             
+            /*
             // Sistem inşası (Build) tamamlandığında tetiklenecek olay:
             builder.RegisterBuildCallback(container =>
             {
@@ -56,6 +58,7 @@ namespace CardMatching.CompositionRoot
                 // Ve bunu Core'daki Data nesneme manuel olarak veriyorum (Pure DI)
                 _currentGameData.Initialize(createdGameEvents); 
             });
+            */
             
             
             // --- INFRASTRUCTURE ---
@@ -71,6 +74,7 @@ namespace CardMatching.CompositionRoot
             builder.RegisterEntryPoint<ScoreManager>().WithParameter(_minimumStreak);
             builder.RegisterComponent(_gridBoxController).AsImplementedInterfaces();
             builder.RegisterComponent(_gridBoxItemFactory);
+            builder.RegisterEntryPoint<GameSessionController>();
             
             // --- UI ---
             // AsImplementedInterfaces() diyerek VContainer'a bu sınıftaki IInitializable'ı bulmasını ve tetiklemesini söylüyoruz.
@@ -91,13 +95,12 @@ namespace CardMatching.CompositionRoot
             }
         }
         
-        // ÖNEMLİ: Scope scripti kapanırken SO'daki eventleri temizleyelim (Memory Leak olmasın)
-        protected override void OnDestroy()
-        {
-            if (_currentGameData != null)
-                _currentGameData.Dispose();
-                
-            base.OnDestroy();
-        }
+        // protected override void OnDestroy()
+        // {
+            // ÖNEMLİ: Scope scripti kapanırken SO'daki eventleri temizleyelim (Memory Leak olmasın)
+            // if (_currentGameData != null)
+            //     _currentGameData.Dispose();
+        //     base.OnDestroy();
+        // }
     }
 }

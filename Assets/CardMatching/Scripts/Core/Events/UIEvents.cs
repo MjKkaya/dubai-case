@@ -11,5 +11,7 @@ namespace CardMatching.Core.Events
 
         // Show the UnfinishedLevelProgressPanel
         public Action<CurrentGameDataSO> UnfinishedLevelProgressPanelShow;
+
+        public Action NewGameRequested;
     }
 }

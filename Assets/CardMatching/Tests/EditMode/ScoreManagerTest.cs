@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using CardMatching.Core.Events;
-using CardMatching.Features.Scoresystem.Controllers;
+using CardMatching.Features.ScoreSystem.Controllers;
 
 
 namespace CardMatching.Tests.EditMode
@@ -16,7 +16,7 @@ namespace CardMatching.Tests.EditMode
         public void Setup()
         {
             _dummyGameEvents = new GameEvents();
-            _scoreManager = new ScoreManager(2, _dummyGameEvents); // minimumStreak = 2
+            _scoreManager = new ScoreManager(2, _dummyGameEvents, null); // minimumStreak = 2
             _scoreManager.Initialize();
         }
 
