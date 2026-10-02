@@ -1,5 +1,6 @@
 using System;
 using CardMatching.Core.Events;
+using CardMatching.Core.Interfaces;
 using CardMatching.Core.Settings;
 using CardMatching.Core.Utils;
 using UnityEngine;
@@ -15,12 +16,15 @@ namespace CardMatching.Features.LevelProgression.Services
         private readonly CurrentGameDataSO _currentGameData;
         private readonly GameEvents _gameEvents;
         private readonly UIEvents _uiEvents;
+        private readonly ISaveRepository _saveRepository;
+
         
-        public UnfinishedLevelProgressManager(CurrentGameDataSO currentGameData, GameEvents gameEvents, UIEvents uiEvents)
+        public UnfinishedLevelProgressManager(CurrentGameDataSO currentGameData, GameEvents gameEvents, UIEvents uiEvents, ISaveRepository saveRepository)
         {
             _currentGameData = currentGameData;
             _gameEvents = gameEvents;
             _uiEvents = uiEvents;
+            _saveRepository = saveRepository;
         }
         
         public void Start()
@@ -31,6 +35,7 @@ namespace CardMatching.Features.LevelProgression.Services
             _gameEvents.ApplicationPaused += GameEvents_ApplicationPaused;
             
             LoadLastUnfinishedGameData();
+
             if (_currentGameData.TurnCount > 0)
                 _uiEvents.UnfinishedLevelProgressPanelShow?.Invoke(_currentGameData);
             else
@@ -53,20 +58,17 @@ namespace CardMatching.Features.LevelProgression.Services
         private void SaveLastUnfinishedGameData()
         {
             CustomDebug.Log($"{this}-SaveLastUnfinishedGameData");
-            PlayerPrefs.SetString(_unfinishedGameDataKey, JsonUtility.ToJson(_currentGameData));
-            PlayerPrefs.Save();
+            _saveRepository.Save(_unfinishedGameDataKey, _currentGameData); 
         }
 
         private void LoadLastUnfinishedGameData()
         {
-            string data = PlayerPrefs.GetString(_unfinishedGameDataKey, null);
-            if(!string.IsNullOrEmpty(data))
-                JsonUtility.FromJsonOverwrite(data, _currentGameData);
+            _saveRepository.LoadInto(_unfinishedGameDataKey, _currentGameData);
         }
 
         private void DeleteUnfinishedGameData()
         {
-            PlayerPrefs.DeleteKey(_unfinishedGameDataKey);
+            _saveRepository.Delete(_unfinishedGameDataKey);
         }
 
 

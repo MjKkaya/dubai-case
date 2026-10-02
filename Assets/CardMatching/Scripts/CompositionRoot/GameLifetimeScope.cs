@@ -1,5 +1,6 @@
 using CardMatching.Core.CoreServices;
 using CardMatching.Core.Events;
+using CardMatching.Core.Infrastructure;
 using CardMatching.Core.Interfaces;
 using CardMatching.Core.Settings;
 using CardMatching.Features.LevelProgression.Services;
@@ -66,6 +67,7 @@ namespace CardMatching.CompositionRoot
             builder.RegisterInstance(_audioSettings);
             builder.RegisterEntryPoint<GameplaySounds>();
             builder.RegisterEntryPoint<UnfinishedLevelProgressManager>();
+            builder.Register<ISaveRepository, PlayerPrefsSaveRepository>(Lifetime.Singleton);
             
             // --- GAMEPLAY ---
             // YENİ: CommandInvoker'ı normal bir C# sınıfı olarak kaydet (Scoped = oyun boyunca 1 tane)
