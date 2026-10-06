@@ -3,11 +3,12 @@
   <Project Path="Unity.PlayerPrefsEditor.Editor.csproj" />
   <Project Path="CardMatching.MatchMechanic.csproj" />
   <Project Path="DOTween.Modules.csproj" />
-  <Project Path="CardMatching.AI.csproj" />
   <Project Path="CardMatching.LevelProgression.csproj" />
+  <Project Path="CardMatching.AudioSystem.csproj" />
+  <Project Path="CardMatching.AI.csproj" />
+  <Project Path="CardMatching.GameFlow.csproj" />
   <Project Path="CardMatching.CompositionRoot.csproj" />
   <Project Path="CardMatching.Tests.csproj" />
-  <Project Path="CardMatching.GameFlow.csproj" />
   <Project Path="CardMatching.ScoreSystem.csproj" />
   <Project Path="Unity.PlayerPrefsEditor.EditorResources.csproj" />
   <Project Path="Unity.PlayerPrefsEditor.Samples.SampleScene.csproj" />

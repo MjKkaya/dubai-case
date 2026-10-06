@@ -1,14 +1,19 @@
-using CardMatching.Core.Events;
-using CardMatching.Core.Interfaces;
 using UnityEngine;
 using TMPro;
 using VContainer;
 using CardMatching.Core.Settings;
+using MessagePipe;
+using CardMatching.Features.MatchMechanic.Signals;
+using CardMatching.Core.Utils;
+using System;
+using CardMatching.Features.ScoreSystem.Signals;
+using CardMatching.Core.Events.Signals;
+using VContainer.Unity;
 
 
 namespace CardMatching.Features.GameFlow.View
 {
-    public class StaticsPanel : MonoBehaviour
+    public class StaticsPanel : MonoBehaviour, IInitializable
     {
         private float _currentScore;
         private float CurrentScore
@@ -44,34 +49,50 @@ namespace CardMatching.Features.GameFlow.View
         [SerializeField] private TextMeshProUGUI _turnsText;
         [SerializeField] private TextMeshProUGUI _scoreText;
 
+        private ISubscriber<UnfinishedGameStartingSignal> _unfinishedGameStartingSub;
+        private ISubscriber<NewGameStartingSignal> _newGameStartingSub;
+        private ISubscriber<MatchingCardSignal> _matchingCardSub;
+        private ISubscriber<MismatchingCardSignal> _mismatchingCardSub;
+        private ISubscriber<EarnedPointSignal> _earnedPointSub;
+        private ISubscriber<EarnedComboPointSignal> _earnedComboPointSub;
+        private IDisposable _disposables;
         
-        private GameEvents _gameEvents;
         
         [Inject]
-        public void Construct(GameEvents gameEvents)
+        public void Construct(ISubscriber<UnfinishedGameStartingSignal> unfinishedGameStartingSub,
+        ISubscriber<NewGameStartingSignal> newGameStartingSub,
+        ISubscriber<MatchingCardSignal> matchingCardSub,
+        ISubscriber<MismatchingCardSignal> mismatchingCardSub,
+        ISubscriber<EarnedPointSignal> earnedPointSub,
+        ISubscriber<EarnedComboPointSignal> earnedComboPointSub)
         {
-            _gameEvents = gameEvents;
-            
-            _gameEvents.UnfinishedGameStarting += GameEvents_UnfinishedGameStarting;
-            _gameEvents.NewGameStarting += GameEvents_NewGameStarting;
-            _gameEvents.MatchingCard += GameEvents_MatchingCard;
-            _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
-            _gameEvents.EarnedPoint += GameEvents_EarnedPoint;
-            _gameEvents.EarnedComboPoint += GameEvents_EarnedComboPoint;
+            CustomDebug.Log("StaticsPanel-Initialize");
+            _unfinishedGameStartingSub = unfinishedGameStartingSub;
+            _newGameStartingSub = newGameStartingSub;
+            _matchingCardSub = matchingCardSub;
+            _mismatchingCardSub = mismatchingCardSub;
+            _earnedPointSub = earnedPointSub;
+            _earnedComboPointSub = earnedComboPointSub;
+        }
+
+        public void Initialize()
+        {
+            CustomDebug.Log("StaticsPanel-Initialize");
+            var bag = DisposableBag.CreateBuilder();
+            _unfinishedGameStartingSub.Subscribe(OnUnfinishedGameStartingSignal).AddTo(bag);
+            _newGameStartingSub.Subscribe(OnNewGameStartingSignal).AddTo(bag);
+            _matchingCardSub.Subscribe(OnMatchingCardSignal).AddTo(bag);
+            _mismatchingCardSub.Subscribe(OnMismatchingCardSignal).AddTo(bag);
+            _earnedPointSub.Subscribe(OnEarnedPointSignal).AddTo(bag);
+            _earnedComboPointSub.Subscribe(OnEarnedComboPointSignal).AddTo(bag);
+
+            _disposables = bag.Build();
         }
 
 
         private void OnDestroy()
         {
-            if(_gameEvents == null)
-                return;
-            
-            _gameEvents.UnfinishedGameStarting -= GameEvents_UnfinishedGameStarting;
-            _gameEvents.NewGameStarting -= GameEvents_NewGameStarting;
-            _gameEvents.MatchingCard += GameEvents_MatchingCard;
-            _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
-            _gameEvents.EarnedPoint -= GameEvents_EarnedPoint;
-            _gameEvents.EarnedComboPoint -= GameEvents_EarnedComboPoint;
+            _disposables?.Dispose();
         }
 
 
@@ -83,37 +104,38 @@ namespace CardMatching.Features.GameFlow.View
         }
 
 
-        private void GameEvents_UnfinishedGameStarting(CurrentGameDataSO currentGameDataSO)
+        private void OnUnfinishedGameStartingSignal(UnfinishedGameStartingSignal signal)
         {
+            CurrentGameDataSO currentGameDataSO = signal.GameData;
             CurrentScore = currentGameDataSO.Score;
             MatchesCount = currentGameDataSO.MatchesCount;
             TurnsCount = currentGameDataSO.TurnCount;
         }
 
-        private void GameEvents_NewGameStarting()
+        private void OnNewGameStartingSignal(NewGameStartingSignal signal)
         {
             ResetDataAndText();
         }
 
-        private void GameEvents_MismatchingCard()
+        private void OnMismatchingCardSignal(MismatchingCardSignal signal)
         {
             TurnsCount = ++_turnsCount;
         }
 
-        private void GameEvents_MatchingCard(IGridBoxCardItem firstSelectedCardOne, IGridBoxCardItem secondSelectedCard)
+        private void OnMatchingCardSignal(MatchingCardSignal signal)
         {
             MatchesCount = ++_matchesCount;
             TurnsCount = ++_turnsCount;
         }
 
-        private void GameEvents_EarnedPoint(float point)
+        private void OnEarnedPointSignal(EarnedPointSignal signal)
         {
-            CurrentScore = _currentScore + point;
+            CurrentScore = _currentScore + signal.Point;
         }
 
-        private void GameEvents_EarnedComboPoint(float point)
+        private void OnEarnedComboPointSignal(EarnedComboPointSignal signal)
         {
-            CurrentScore = _currentScore + point;
+            CurrentScore = _currentScore + signal.Point;
         }
     }
 }

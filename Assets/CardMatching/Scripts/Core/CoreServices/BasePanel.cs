@@ -1,11 +1,10 @@
 using UnityEngine;
-using VContainer.Unity;
 
 
 namespace CardMatching.Core.CoreServices
 {
     [RequireComponent(typeof(CanvasGroup))]
-    public abstract class BasePanel : MonoBehaviour, IInitializable
+    public abstract class BasePanel : MonoBehaviour
     {
         private CanvasGroup _canvasGroup;
 
@@ -14,11 +13,6 @@ namespace CardMatching.Core.CoreServices
         {
             _canvasGroup = GetComponent<CanvasGroup>();
             HidePanel();
-        }
-
-        public virtual void Initialize()
-        {
-            
         }
 
 

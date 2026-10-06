@@ -1,12 +1,12 @@
-using CardMatching.Core.Interfaces;
-using CardMatching.Core.Events;
 using System;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using CardMatching.Features.MatchMechanic.Controllers;
-using CardMatching.Core.Settings;
 using CardMatching.Core.Utils;
+using MessagePipe;
+using CardMatching.Core.Events.Signals;
+using CardMatching.Features.MatchMechanic.Signals;
 
 
 namespace CardMatching.Features.MatchMechanic.View
@@ -24,24 +24,32 @@ namespace CardMatching.Features.MatchMechanic.View
     public class GameplayManager : MonoBehaviour, IInitializable, IDisposable
     {
         private CardMatchCommandInvoker _cardMatchCommandInvoker;
-        private GameEvents _gameEvents;
         
+        private ISubscriber<GameStartedSignal> _gameStartedSub;
+        private ISubscriber<CardFlippedSignal> _cardFlipped;
+
+        private IDisposable _disposables;
         
+
         [Inject]
-        public void Construct(CardMatchCommandInvoker invoker, GameEvents gameEvents)
+        public void Construct(CardMatchCommandInvoker invoker, ISubscriber<GameStartedSignal> gameStartedSub, ISubscriber<CardFlippedSignal> cardFlipped)
         {
             _cardMatchCommandInvoker = invoker;
-            _gameEvents = gameEvents;
+            _gameStartedSub = gameStartedSub;
+            _cardFlipped = cardFlipped;
         }
         
 
         public void Initialize()
         {
             CustomCoroutines.Initialize(this);
+
+            DisposableBagBuilder bag = DisposableBag.CreateBuilder(2);
             
-            _gameEvents.GameStarted += GameEvents_GameStarted;
-            //_gameEvents.GameOver += GameEvents_GameOver;
-            _gameEvents.CardFlipped += GameEvents_CardFlipped;
+            _gameStartedSub.Subscribe(OnGameStarted).AddTo(bag);
+            _cardFlipped.Subscribe(OnCardFlipped).AddTo(bag);
+
+            _disposables = bag.Build();
 
             CustomDebug.Log($"vSyncCount: {QualitySettings.vSyncCount}, fps: { Application.targetFrameRate}, screen:{Screen.currentResolution.refreshRateRatio} ");
             QualitySettings.vSyncCount = 0;
@@ -54,27 +62,22 @@ namespace CardMatching.Features.MatchMechanic.View
 
         public void Dispose()
         {
-            _gameEvents.GameStarted -= GameEvents_GameStarted;
-            //_gameEvents.GameOver -= GameEvents_GameOver;
-            _gameEvents.CardFlipped -= GameEvents_CardFlipped;
+            _disposables?.Dispose();
         }
 
 
-        private void GameEvents_GameStarted(GridDimension gridDimension, IGridBoxCardItem[,] gridBoxCardItems)
+        #region Events
+
+        private void OnGameStarted(GameStartedSignal signal)
         {
             _cardMatchCommandInvoker.ResetList();
         }
 
-        //private void GameEvents_GameOver()
-        //{
-        //    _cardMatchCommandInvoker.ResetList();
-        //}
-
-
-
-        private void GameEvents_CardFlipped(IGridBoxCardItem gridBoxCardItem)
+        private void OnCardFlipped(CardFlippedSignal signal)
         {
-            _cardMatchCommandInvoker.AddSelectedCardItem(gridBoxCardItem);
+            _cardMatchCommandInvoker.AddSelectedCardItem(signal.FlippedCard);
         }
+
+        #endregion
     }
 }

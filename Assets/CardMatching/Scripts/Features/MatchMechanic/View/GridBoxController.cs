@@ -1,5 +1,4 @@
 using System;
-using CardMatching.Core.Events;
 using System.Collections;
 using System.Collections.Generic;
 using CardMatching.Core.Interfaces;
@@ -9,6 +8,9 @@ using VContainer.Unity;
 using Random = UnityEngine.Random;
 using CardMatching.Core.Settings;
 using CardMatching.Core.Utils;
+using MessagePipe;
+using CardMatching.Core.Events.Signals;
+using CardMatching.Features.MatchMechanic.Signals;
 
 
 namespace CardMatching.Features.MatchMechanic.View
@@ -19,7 +21,7 @@ namespace CardMatching.Features.MatchMechanic.View
         private const int _minDimentionValue = 4;
         private const int _maxDimentionValue = 4;
 
-        private readonly WaitForSeconds _waitForFirstTimeCardShowing = new (1f);
+        private readonly WaitForSeconds _waitForFirstTimeCardShowing = new(1f);
 
         [SerializeField] private GridBoxItemFactory _gridBoxFactory;
         [SerializeField] private GridBoxItemDataFactory _gridBoxItemDataFactory;
@@ -31,31 +33,44 @@ namespace CardMatching.Features.MatchMechanic.View
         private readonly List<GridBoxCardData> _gridBoxCardItemDataList = new();
 
         private GridDimension _currentLevelGridAreaDimension;
-        private GameEvents _gameEvents;
+        private ISubscriber<UnfinishedGameStartingSignal> _unfinishedGameStartingSub;
+        private ISubscriber<NewGameStartingSignal> _newGameStartingSub;
+        private ISubscriber<GameOverSignal> _gameOverSub;
+        private ISubscriber<MatchingCardSignal> _matchingCardSub;
+        IPublisher<GameStartedSignal> _gameStartedPub;
 
-        
+        private IDisposable _disposables;
+
+
         [Inject]
-        public void Construct(GameEvents gameEvents)
+        public void Construct(ISubscriber<UnfinishedGameStartingSignal> unfinishedGameStartingSub,
+        ISubscriber<NewGameStartingSignal> newGameStartingSub,
+        ISubscriber<GameOverSignal> gameOverSub,
+        ISubscriber<MatchingCardSignal> matchingCardSub,
+        IPublisher<GameStartedSignal> gameStartedPub)
         {
-            _gameEvents = gameEvents;
+            _unfinishedGameStartingSub = unfinishedGameStartingSub;
+            _newGameStartingSub = newGameStartingSub;
+            _gameOverSub = gameOverSub;
+            _matchingCardSub = matchingCardSub;
+            _gameStartedPub = gameStartedPub;
         }
 
         public void Initialize()
         {
-            _gameEvents.UnfinishedGameStarting += GameEvents_UnfinishedGameStarting;
-            _gameEvents.NewGameStarting+= GameEvents_GameStarting;
-            _gameEvents.MatchingCard += GameEvents_MatchingCard;
-            //_gameEvents.MismatchingCard += GameEvents_MismatchingCard;
-            _gameEvents.GameOver += GameEvents_GameOver;
+            DisposableBagBuilder bag = DisposableBag.CreateBuilder(4);
+
+            _unfinishedGameStartingSub.Subscribe(OnUnfinishedGameStarting).AddTo(bag);
+            _newGameStartingSub.Subscribe(OnGameStarting).AddTo(bag);
+            _gameOverSub.Subscribe(OnGameOver).AddTo(bag);
+            _matchingCardSub.Subscribe(OnMatchingCard).AddTo(bag);
+
+            _disposables = bag.Build();
         }
 
         public void Dispose()
         {
-            _gameEvents.UnfinishedGameStarting -= GameEvents_UnfinishedGameStarting;
-            _gameEvents.NewGameStarting -= GameEvents_GameStarting;
-            _gameEvents.MatchingCard -= GameEvents_MatchingCard;
-            //_gameEvents.MismatchingCard -= GameEvents_MismatchingCard;
-            _gameEvents.GameOver -= GameEvents_GameOver;
+            _disposables?.Dispose();
         }
 
 
@@ -64,7 +79,11 @@ namespace CardMatching.Features.MatchMechanic.View
             _currentLevelGridAreaDimension = new GridDimension(currentGameDataSO.GridAreaDimensionX, currentGameDataSO.GridAreaDimensionY);
             _gridBoxItemDataFactory.CreateCardDataListWithCurrentData(_gridBoxCardItemDataList, currentGameDataSO.IconIndexArray);
             CreateGridBoxItems(_gridBoxCardItemDataList);
-            _gameEvents.GameStarted?.Invoke(_currentLevelGridAreaDimension, _gridBoxCardItems);
+            _gameStartedPub.Publish(new GameStartedSignal
+            {
+                Dimension = _currentLevelGridAreaDimension,
+                GridItems = _gridBoxCardItems
+            });
             SetCardItemInteracable(true);
             //StartCoroutine(ShowAllCardforShortTime()); //It was closed because player can abuse this situation.
         }
@@ -75,18 +94,22 @@ namespace CardMatching.Features.MatchMechanic.View
             int pairCount = _currentLevelGridAreaDimension.X * _currentLevelGridAreaDimension.Y / 2;
             FillGridBoxCardItemDataList(pairCount);
             CreateGridBoxItems(_gridBoxCardItemDataList);
-            _gameEvents.GameStarted?.Invoke(_currentLevelGridAreaDimension, _gridBoxCardItems);
+            _gameStartedPub.Publish(new GameStartedSignal
+            {
+                Dimension = _currentLevelGridAreaDimension,
+                GridItems = _gridBoxCardItems
+            });
             StartCoroutine(ShowAllCardforShortTime());
             //AIAutoPlayTest.StartTest(_gridBoxCardItems, _gameEvents);
         }
 
         private GridDimension CreateRandomGridDimension()
         {
-            int sideX = Random.Range(_minDimentionValue, _maxDimentionValue+1);
-            int sideY = Random.Range(_minDimentionValue, _maxDimentionValue+1);
+            int sideX = Random.Range(_minDimentionValue, _maxDimentionValue + 1);
+            int sideY = Random.Range(_minDimentionValue, _maxDimentionValue + 1);
             CustomDebug.Log($"{this}-sideX:{sideX}, sideY:{sideY}");
             //prevent odd number of total cards
-            if (sideX%2 != 0 && sideY % 2 != 0)
+            if (sideX % 2 != 0 && sideY % 2 != 0)
             {
                 if (sideX % 2 != 0)
                     sideX--;
@@ -183,7 +206,7 @@ namespace CardMatching.Features.MatchMechanic.View
             Vector2 gap;
 
             float gapX = _cardItemContainer.rect.width / _currentLevelGridAreaDimension.X;
-            float gapY = _cardItemContainer.rect.height/ _currentLevelGridAreaDimension.Y;
+            float gapY = _cardItemContainer.rect.height / _currentLevelGridAreaDimension.Y;
             gapX *= gapRation;
             gapY *= gapRation;
 
@@ -197,8 +220,8 @@ namespace CardMatching.Features.MatchMechanic.View
         {
             Vector2 newSize;
 
-            float gapRemovedWidth = _cardItemContainer.rect.width - (gap.x * (_currentLevelGridAreaDimension.X +1));
-            float gapRemovedHeight = _cardItemContainer.rect.height - (gap.y * (_currentLevelGridAreaDimension.Y +1));
+            float gapRemovedWidth = _cardItemContainer.rect.width - (gap.x * (_currentLevelGridAreaDimension.X + 1));
+            float gapRemovedHeight = _cardItemContainer.rect.height - (gap.y * (_currentLevelGridAreaDimension.Y + 1));
 
             float itemNewSizeX = gapRemovedWidth / _currentLevelGridAreaDimension.X;
             float itemNewSizeY = gapRemovedHeight / _currentLevelGridAreaDimension.Y;
@@ -249,27 +272,27 @@ namespace CardMatching.Features.MatchMechanic.View
             foreach (GridBoxCardData data in _gridBoxCardItemDataList)
             {
                 //We must to check this control because this is twin list, ex: if we have 6 card in the list, that means; 3 different card data and each data class duplicated.
-                if(data.CardIconIndex != GridBoxCardData.EmptyIndexNo)
+                if (data.CardIconIndex != GridBoxCardData.EmptyIndexNo)
                     _gridBoxItemDataFactory.ReleaseGridBoxItemData(data);
             }
         }
 
 
-        #region Game Events
+        #region Events
 
-        private void GameEvents_UnfinishedGameStarting(CurrentGameDataSO currentGameDataSO)
+        private void OnUnfinishedGameStarting(UnfinishedGameStartingSignal signal)
         {
-            StartGameWithUnfinishedGameData(currentGameDataSO);
+            StartGameWithUnfinishedGameData(signal.GameData);
         }
 
-        private void GameEvents_GameStarting()
+        private void OnGameStarting(NewGameStartingSignal signal)
         {
             CreateNewLevel();
         }
 
-        private void GameEvents_MatchingCard(IGridBoxCardItem firstSelectedCardOne, IGridBoxCardItem secondSelectedCard)
+        private void OnMatchingCard(MatchingCardSignal signal)
         {
-            DisappearMatchedCards(firstSelectedCardOne, secondSelectedCard);
+            DisappearMatchedCards(signal.FirstCard, signal.SecondCard);
         }
 
         //private void GameEvents_MismatchingCard(List<GridBoxCardItem> cardList)
@@ -277,7 +300,7 @@ namespace CardMatching.Features.MatchMechanic.View
         //    FlipBackSelectedCards(cardList);
         //}
 
-        private void GameEvents_GameOver()
+        private void OnGameOver(GameOverSignal signal)
         {
             ReleaseGridBoxCardItemDataList();
         }

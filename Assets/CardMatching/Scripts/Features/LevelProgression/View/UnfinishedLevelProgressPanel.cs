@@ -1,21 +1,30 @@
+using System;
 using CardMatching.Core.CoreServices;
-using CardMatching.Core.Events;
+using CardMatching.Core.Events.Signals;
 using CardMatching.Core.Settings;
+using CardMatching.Core.Utils;
+using CardMatching.Features.GameFlow.Signals;
+using CardMatching.Features.LevelProgression.Signals;
+using MessagePipe;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
+using VContainer.Unity;
 
 
 namespace CardMatching.Features.LevelProgression.View
 {
-    public class UnfinishedLevelProgressPanel : BasePanel
+    public class UnfinishedLevelProgressPanel : BasePanel, IInitializable
     {
         [SerializeField] private Button _continueButton;
         [SerializeField] private Button _newGameButton;
         
         private CurrentGameDataSO _currentGameData;
-        private GameEvents _gameEvents;
-        private UIEvents _uiEvents;
+        
+        private ISubscriber<UnfinishedLevelProgressPanelShowSignal> _panelShowSub;
+        private IPublisher<NewGameRequestedSignal> _newGameRequestedPub;
+        private IPublisher<UnfinishedGameStartingSignal> _unfinishedGameStartingPub;
+        private IDisposable _disposables;
         
 
         protected override void Awake()
@@ -26,15 +35,22 @@ namespace CardMatching.Features.LevelProgression.View
         }
         
         [Inject]
-        public void Construct(GameEvents gameEvents, UIEvents uiEvents)
+        public void Construct(ISubscriber<UnfinishedLevelProgressPanelShowSignal> panelShowSub,
+        IPublisher<NewGameRequestedSignal> newGameRequestedPub,
+        IPublisher<UnfinishedGameStartingSignal> unfinishedGameStartingPub)
         {
-            _gameEvents = gameEvents;
-            _uiEvents = uiEvents;
+            CustomDebug.Log("UnfinishedLevelProgressPanel-Construct");
+            _panelShowSub = panelShowSub;
+            _newGameRequestedPub = newGameRequestedPub;
+            _unfinishedGameStartingPub = unfinishedGameStartingPub;
         }
         
-        public override void Initialize()
+        public void Initialize()
         {
-            _uiEvents.UnfinishedLevelProgressPanelShow += OnShowEvent;
+            CustomDebug.Log("UnfinishedLevelProgressPanel-Initialize");
+            var bag = DisposableBag.CreateBuilder();
+            _panelShowSub.Subscribe(OnShowPanelSignal).AddTo(bag);
+            _disposables = bag.Build();
         }
 
 
@@ -42,9 +58,7 @@ namespace CardMatching.Features.LevelProgression.View
         {
             _continueButton.onClick.RemoveListener(OnClickedContinueButton);
             _newGameButton.onClick.RemoveListener(OnClickedNewGameButton);
-
-             if (_uiEvents != null) 
-                _uiEvents.UnfinishedLevelProgressPanelShow -= OnShowEvent;
+            _disposables?.Dispose();
         }
 
 
@@ -56,20 +70,23 @@ namespace CardMatching.Features.LevelProgression.View
 
         private void OnClickedContinueButton()
         {
-            _gameEvents.UnfinishedGameStarting?.Invoke(_currentGameData);
+            _unfinishedGameStartingPub.Publish(new UnfinishedGameStartingSignal(){ GameData = _currentGameData});
             HidePanel();
         }
 
         private void OnClickedNewGameButton()
         {
-            _uiEvents.NewGameRequested?.Invoke();
+            _newGameRequestedPub.Publish(new NewGameRequestedSignal());
             HidePanel();
         }
 
-        private void OnShowEvent(CurrentGameDataSO data)
+        private void OnShowPanelSignal(UnfinishedLevelProgressPanelShowSignal signal)
         {
-            _currentGameData = data;
+            CustomDebug.Log("UnfinishedLevelProgressPanel-OnShowPanelSignal");
+            _currentGameData = signal.GameData;
             ShowPanel();
         }
+
+        
     }
 }

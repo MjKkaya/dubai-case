@@ -1,70 +1,74 @@
+using System;
 using CardMatching.Core.CoreServices;
-using CardMatching.Core.Events;
+using CardMatching.Core.Events.Signals;
 using CardMatching.Core.Utils;
+using CardMatching.Features.GameFlow.Signals;
+using MessagePipe;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
+using VContainer.Unity;
 
 
 namespace CardMatching.Features.GameFlow.View
 {
-    public class BeginningPanel : BasePanel
+    public class BeginningPanel : BasePanel, IInitializable
     {
         [SerializeField] private Button _playButton;
         
-        private GameEvents _gameEvents;
-        private UIEvents _uiEvents;
+        private IPublisher<NewGameRequestedSignal> _newGameRequestedPub;
+        private ISubscriber<BeginningPanelShowSignal> _showPanelSub;
+        private ISubscriber<GameOverSignal> _gameOverSub;
+        private IDisposable _disposables;
 
         
         protected override void Awake()
         {
             base.Awake();
-            _playButton.onClick.AddListener(OnClickedPlayButton);
+            _playButton.onClick.AddListener(OnClickedNewGameButton);
             CustomDebug.Log("BeginningPanel-Awake");
         }
         
         [Inject]
-        public void Construct(GameEvents gameEvents, UIEvents uiEvents)
+        public void Construct(IPublisher<NewGameRequestedSignal> newGameRequestedPub, ISubscriber<BeginningPanelShowSignal> showPanelSub, ISubscriber<GameOverSignal> gameOverSub)
         {
-            _gameEvents = gameEvents;
-            _gameEvents.GameOver += GameEvents_GameOver;
-            _uiEvents = uiEvents;
             CustomDebug.Log("BeginningPanel-Construct");
+            _newGameRequestedPub = newGameRequestedPub;
+            _showPanelSub = showPanelSub;
+            _gameOverSub = gameOverSub;
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
-            _uiEvents.BeginningPanelShow += OnShowEvent;
             CustomDebug.Log("BeginningPanel-Initialize");
+
+            var bag = DisposableBag.CreateBuilder();
+            _showPanelSub.Subscribe(OnShowPanelSignal).AddTo(bag);
+            _gameOverSub.Subscribe(OnGameOverSignal).AddTo(bag);
+
+            _disposables = bag.Build();
         }
 
-        void Start()
-        {
-            CustomDebug.Log("BeginningPanel-Start");
-        }
 
         private void OnDestroy()
         {
-            _playButton.onClick.RemoveListener(OnClickedPlayButton);
-            _gameEvents.GameOver -= GameEvents_GameOver;
-
-            if (_uiEvents != null) 
-                _uiEvents.BeginningPanelShow -= OnShowEvent;
+            _playButton.onClick.RemoveListener(OnClickedNewGameButton);
+            _disposables?.Dispose();
         }
 
 
-        private void OnClickedPlayButton()
+        private void OnClickedNewGameButton()
         {
-            _uiEvents.NewGameRequested?.Invoke();
+            _newGameRequestedPub.Publish(new NewGameRequestedSignal());
             HidePanel();
         }
 
-        private void OnShowEvent()
+        private void OnShowPanelSignal(BeginningPanelShowSignal signal)
         {
             ShowPanel();
         }
 
-        private void GameEvents_GameOver()
+        private void OnGameOverSignal(GameOverSignal signal)
         {
             ShowPanel();
         }

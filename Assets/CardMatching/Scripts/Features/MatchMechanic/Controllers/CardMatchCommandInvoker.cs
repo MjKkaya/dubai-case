@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using CardMatching.Core.Events;
 using CardMatching.Core.Interfaces;
 using CardMatching.Core.Utils;
-using UnityEngine;
+using CardMatching.Features.MatchMechanic.Signals;
+using MessagePipe;
 
 
 namespace CardMatching.Features.MatchMechanic.Controllers
@@ -13,11 +13,14 @@ namespace CardMatching.Features.MatchMechanic.Controllers
         private readonly Stack<ICommand> _redoStack = new ();
         private readonly List<CardMatchCommand> _cardMatchCommandList = new ();
 
-        private readonly GameEvents _gameEvents;
+        private readonly IPublisher<MatchingCardSignal> _matchingCardPub;
+        private readonly IPublisher<MismatchingCardSignal> _mismatchingCard;
+
         
-        public CardMatchCommandInvoker(GameEvents gameEvents)
+        public CardMatchCommandInvoker(IPublisher<MatchingCardSignal> matchingCardPub, IPublisher<MismatchingCardSignal> mismatchingCard)
         {
-            _gameEvents = gameEvents;
+            _matchingCardPub = matchingCardPub;
+            _mismatchingCard = mismatchingCard;
         }
         
         
@@ -49,7 +52,7 @@ namespace CardMatching.Features.MatchMechanic.Controllers
                     return cardMatchCommand;
             }
 
-            cardMatchCommand = new CardMatchCommand(_gameEvents);
+            cardMatchCommand = new CardMatchCommand(_matchingCardPub, _mismatchingCard);
             _cardMatchCommandList.Add(cardMatchCommand);
 
             //CustomDebug.Log($"CardMatchCommandController-GetEmptySelectedCardPaid:{_cardMatchCommandList.Count}");

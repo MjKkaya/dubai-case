@@ -5,7 +5,12 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "CardMatching.Core",
-        "CardMatching.ScoreSystem"
+        "CardMatching.MatchMechanic",
+        "CardMatching.ScoreSystem",
+        "VContainer",
+        "MessagePipe",
+        "MessagePipe.VContainer",
+        "UniTask"
     ],
     "includePlatforms": [
         "Editor"

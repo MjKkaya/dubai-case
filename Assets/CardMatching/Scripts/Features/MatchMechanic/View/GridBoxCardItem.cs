@@ -5,14 +5,14 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using CardMatching.Core.Settings;
 using DG.Tweening;
+using MessagePipe;
+using CardMatching.Features.MatchMechanic.Signals;
 
 
 namespace CardMatching.Features.MatchMechanic.View
 {
     public class GridBoxCardItem : MonoBehaviour, IPointerClickHandler, IGridBoxCardItem
     {
-        private GameEvents _gameEvents;
-        
         private GridBoxCardData _gridBoxCardData;
         public GridBoxCardData GridBoxData
         {
@@ -71,6 +71,8 @@ namespace CardMatching.Features.MatchMechanic.View
         private CanvasGroup _canvasGroup;
         private bool _isOpen;
         private CardSettingsSO _cardSettings;
+        private IPublisher<CardFlippedSignal> _cardFlippedPub;
+        private IPublisher<CardSelectedSignal> _cardSelectedPub;
 
 
         private void Awake()
@@ -80,12 +82,14 @@ namespace CardMatching.Features.MatchMechanic.View
         }
 
 
-        public void Init(GridBoxCardData gridBoxCardData, GridDimension gridLocation, GameEvents gameEvents,CardSettingsSO cardSettings)
+        public void Init(GridBoxCardData gridBoxCardData, GridDimension gridLocation, CardSettingsSO cardSettings, 
+    IPublisher<CardFlippedSignal> cardFlippedPub, IPublisher<CardSelectedSignal> cardSelectedPub)
         {
             _gridBoxCardData = gridBoxCardData;
             GridLocation = gridLocation;
             _isOpen = false;
-            _gameEvents = gameEvents;
+            _cardFlippedPub = cardFlippedPub;
+            _cardSelectedPub = cardSelectedPub;
             _cardSettings = cardSettings;
             
             SetInteraction(false);
@@ -145,7 +149,7 @@ namespace CardMatching.Features.MatchMechanic.View
         private void OnCompletedFlipAnimation()
         {
             if(_isOpen)
-                _gameEvents.CardFlipped?.Invoke(this);
+                _cardFlippedPub.Publish(new CardFlippedSignal(){ FlippedCard = this });
             else
                 SetInteraction(true);
         }
@@ -171,7 +175,7 @@ namespace CardMatching.Features.MatchMechanic.View
         {
             SetInteraction(false);
             StartFlipAniamtion();
-            _gameEvents.CardSelected?.Invoke();
+            _cardSelectedPub.Publish(new CardSelectedSignal());
         }
     }
 }

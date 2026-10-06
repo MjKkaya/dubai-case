@@ -1,7 +1,8 @@
-using CardMatching.Core.Events;
 using CardMatching.Core.Interfaces;
 using CardMatching.Core.Utils;
+using CardMatching.Features.MatchMechanic.Signals;
 using CardMatching.Features.MatchMechanic.View;
+using MessagePipe;
 using UnityEngine;
 
 
@@ -11,14 +12,17 @@ namespace CardMatching.Features.MatchMechanic.Controllers
     {
         private GridBoxCardItem _firstSelectedItem;
         private GridBoxCardItem _secondSelectedItem;
-        private readonly GameEvents _gameEvents;
 
-        
-        public CardMatchCommand(GameEvents gameEvents)
+        private readonly IPublisher<MatchingCardSignal> _matchingCardPub;
+        private readonly IPublisher<MismatchingCardSignal> _mismatchingCard;
+
+
+        public CardMatchCommand(IPublisher<MatchingCardSignal> matchingCardPub, IPublisher<MismatchingCardSignal> mismatchingCard)
         {
-            _gameEvents = gameEvents;
+            _matchingCardPub = matchingCardPub;
+            _mismatchingCard = mismatchingCard;
         }
-        
+
 
         public void AddCard(IGridBoxCardItem selectedItemData)
         {
@@ -52,13 +56,13 @@ namespace CardMatching.Features.MatchMechanic.Controllers
         {
             if (IsMatch())
             {
-                _gameEvents.MatchingCard?.Invoke(_firstSelectedItem, _secondSelectedItem);
+                _matchingCardPub.Publish(new MatchingCardSignal(){FirstCard = _firstSelectedItem, SecondCard = _secondSelectedItem});
             }
             else
             {
                 _firstSelectedItem.StartFlipAniamtion();
                 _secondSelectedItem.StartFlipAniamtion();
-                _gameEvents.MismatchingCard?.Invoke();
+                _mismatchingCard.Publish(new MismatchingCardSignal());
             }
         }
 

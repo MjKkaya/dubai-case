@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using CardMatching.Core.Events;
 using CardMatching.Core.Interfaces;
 using CardMatching.Core.Utils;
 using CardMatching.Features.MatchMechanic.View;
@@ -9,8 +8,6 @@ using UnityEngine;
 
 public static class AIAutoPlayTest
 {
-    private static GameEvents _gameEvents;
-    
     //private static PointerEventData pointerEventData;
     private static List<GridBoxCardItem> _cardItemList = new ();
     private static GridBoxCardItem _selectedFirstCard;
@@ -21,9 +18,8 @@ public static class AIAutoPlayTest
     private static int _attempCount;
 
 
-    public static void StartTest(GridBoxCardItem[,] _gridBoxCardItems, GameEvents gameEvents)
+    public static void StartTest(GridBoxCardItem[,] _gridBoxCardItems)
     {
-        _gameEvents = gameEvents;
         _cardItemList.Clear();
 
         // access to CardItem object list - this for open card onthe screen
@@ -122,16 +118,16 @@ public static class AIAutoPlayTest
 
     private static void SetEventHandlers(bool isActive)
     {
-        if(isActive)
-        {
-            _gameEvents.MatchingCard += GameEvents_MatchingCard;
-            _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
-        }
-        else
-        {
-            _gameEvents.MatchingCard -= GameEvents_MatchingCard;
-            _gameEvents.MismatchingCard -= GameEvents_MismatchingCard;
-        }
+        // if(isActive)
+        // {
+        //     _gameEvents.MatchingCard += GameEvents_MatchingCard;
+        //     _gameEvents.MismatchingCard += GameEvents_MismatchingCard;
+        // }
+        // else
+        // {
+        //     _gameEvents.MatchingCard -= GameEvents_MatchingCard;
+        //     _gameEvents.MismatchingCard -= GameEvents_MismatchingCard;
+        // }
     }
 
     private static void GameEvents_MatchingCard(IGridBoxCardItem firstSelectedCardOne, IGridBoxCardItem secondSelectedCard)

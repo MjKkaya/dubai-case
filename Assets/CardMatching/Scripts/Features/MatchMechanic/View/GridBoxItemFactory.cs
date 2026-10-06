@@ -1,6 +1,7 @@
-using CardMatching.Core.Events;
 using CardMatching.Core.Settings;
 using CardMatching.Core.Utils;
+using CardMatching.Features.MatchMechanic.Signals;
+using MessagePipe;
 using UnityEngine;
 using UnityEngine.Pool;
 using VContainer;
@@ -14,12 +15,15 @@ namespace CardMatching.Features.MatchMechanic.View
         [SerializeField] private GridBoxCardItem _prefabGridBoxCardItem;
 
         private ObjectPool<GridBoxCardItem> _gridBoxItemObjectPool;
-        private GameEvents _gameEvents;
+        private IPublisher<CardFlippedSignal> _cardFlippedPub;
+        private IPublisher<CardSelectedSignal> _cardSelectedPub;
+
 
         [Inject]
-        public void Construct(GameEvents gameEvents)
+        public void Construct(IPublisher<CardFlippedSignal> cardFlippedPub, IPublisher<CardSelectedSignal> cardSelectedPub)
         {
-            _gameEvents = gameEvents;
+            _cardFlippedPub = cardFlippedPub;
+            _cardSelectedPub = cardSelectedPub;
         }
         
 
@@ -71,7 +75,7 @@ namespace CardMatching.Features.MatchMechanic.View
         {
             CustomDebug.Log($"{this}-GetGridBoxItem-CountAll:{_gridBoxItemObjectPool.CountAll}");
             GridBoxCardItem gridBoxItem = _gridBoxItemObjectPool.Get();
-            gridBoxItem.Init(gridBoxData, gridLocation, _gameEvents, _cardSettingsSo);
+            gridBoxItem.Init(gridBoxData, gridLocation, _cardSettingsSo, _cardFlippedPub, _cardSelectedPub);
             //gridBoxItem.Disappeared = GridBoxItem_Disappeared;
             return gridBoxItem;
         }
