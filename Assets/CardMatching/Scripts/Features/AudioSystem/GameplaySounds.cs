@@ -1,4 +1,5 @@
 using System;
+using CardMatching.Core.Enums;
 using CardMatching.Core.Events.Signals;
 using CardMatching.Core.Interfaces;
 using CardMatching.Core.Settings;
@@ -12,8 +13,6 @@ namespace CardMatching.Feature.AudioSystem
     public class GameplaySounds : IInitializable, IDisposable
     {
         private readonly IAudioService _audioService;
-        private readonly AudioSettingsSO _audioSettings;
-
         private readonly ISubscriber<CardSelectedSignal> _cardSelectedSub;
         private readonly ISubscriber<MatchingCardSignal> _matchingCardSub;
         private readonly ISubscriber<MismatchingCardSignal> _mismatchingCardSignalSub;
@@ -22,14 +21,13 @@ namespace CardMatching.Feature.AudioSystem
         private IDisposable _disposables;
 
         
-        public GameplaySounds(IAudioService audioService, AudioSettingsSO audioSettings, 
+        public GameplaySounds(IAudioService audioService, 
         ISubscriber<CardSelectedSignal> cardSelectedSub,
         ISubscriber<MatchingCardSignal> matchingCardSub,
         ISubscriber<MismatchingCardSignal> mismatchingCardSignalSub,
         ISubscriber<GameOverSignal> gameOverSub)
         {
             _audioService = audioService;
-            _audioSettings = audioSettings;
 
             _cardSelectedSub = cardSelectedSub;
             _matchingCardSub = matchingCardSub;
@@ -61,25 +59,25 @@ namespace CardMatching.Feature.AudioSystem
         // Play the flipping card sound effect
         private void OnCardSelected(CardSelectedSignal signal)
         {
-            _audioService.PlaySFX(_audioSettings.FlippingCardSound);
+            _audioService.PlaySFX(AudioID.FlippingCard);
         }
 
         // Play the matching card sound effect
         private void OnMatchingCard(MatchingCardSignal signal)
         {
-            _audioService.PlaySFX(_audioSettings.MatchingCardSound);
+            _audioService.PlaySFX(AudioID.MatchingCard);
         }
 
         // Play the mismatching card sound effect
         private void OnMismatchingCard(MismatchingCardSignal signal)
         {
-            _audioService.PlaySFX(_audioSettings.MismatchingCardSound);
+            _audioService.PlaySFX(AudioID.MismatchingCard);
         }
 
         // Play the game over sound effect
         private void OnGameOver(GameOverSignal signal)
         {
-            _audioService.PlaySFX(_audioSettings.GameOverSound);
+            _audioService.PlaySFX(AudioID.GameOver);
         }
 
         #endregion

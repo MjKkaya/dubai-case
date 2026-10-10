@@ -20,6 +20,8 @@ using MessagePipe;
 using CardMatching.Feature.AudioSystem;
 using CardMatching.CompositionRoot.Installers;
 using CardMatching.Core.Events.Signals;
+using CardMatching.Core.Settings.Audio;
+using CardMatching.CompositionRoot.Loaders;
 
 
 namespace CardMatching.CompositionRoot
@@ -28,7 +30,7 @@ namespace CardMatching.CompositionRoot
     {
         [Header("Game Data Settings")]
         [SerializeField] private CurrentGameDataSO _currentGameData;
-        [SerializeField] private AudioSettingsSO _audioSettings;
+        [SerializeField] private AudioSettingsSO _gameplayAudioDatabase;
 
         [Header("Scene References")]
         [SerializeField] private AudioManager _audioManager;
@@ -76,7 +78,8 @@ namespace CardMatching.CompositionRoot
 
             // --- INFRASTRUCTURE ---
             builder.RegisterComponent<IAudioService>(_audioManager);
-            builder.RegisterInstance(_audioSettings);
+            builder.Register<SceneAudioLoader>(Lifetime.Scoped).WithParameter(_gameplayAudioDatabase).AsImplementedInterfaces(); // Initialize() metodunun çalışması için şart!
+
             builder.RegisterEntryPoint<GameplaySounds>();
             builder.RegisterEntryPoint<UnfinishedLevelProgressManager>();
             builder.Register<ISaveRepository, PlayerPrefsSaveRepository>(Lifetime.Singleton);

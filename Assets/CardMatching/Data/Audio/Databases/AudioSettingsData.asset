@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0ecb8498f768479ea97ff9302dd4b11, type: 3}
   m_Name: AudioSettingsData
   m_EditorClassIdentifier: 
-  _flippingCardSound: {fileID: 8300000, guid: 0e7ef2003db834d3ebfd1d10f153bf94, type: 3}
-  _matchingCardSound: {fileID: 8300000, guid: 3cbac25bc424541af9f5e763441c3030, type: 3}
-  _mismatchingCardSound: {fileID: 8300000, guid: fc95c83ded4c646fb8ef77c50cf54a00, type: 3}
-  _gameOverSound: {fileID: 8300000, guid: f5ed3cb5cbcd94c70b90c7d5fbce88ae, type: 3}
+  AudioEntries:
+  - ID: 1
+    AudioEvent: {fileID: 11400000, guid: ac3a2fbe39c3242de82e81e866c545fa, type: 2}
+  - ID: 2
+    AudioEvent: {fileID: 11400000, guid: 37731bf2e7fcb42119c168e51c224064, type: 2}
+  - ID: 3
+    AudioEvent: {fileID: 11400000, guid: 0381384cbc01c4e6bbd8c29e549df5af, type: 2}
+  - ID: 4
+    AudioEvent: {fileID: 11400000, guid: 58c9ac5bb02254c4fbff021863a5a97a, type: 2}

@@ -699,7 +699,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -959.99994, y: -540}
+  m_AnchoredPosition: {x: -960, y: -540}
   m_SizeDelta: {x: -639.9999, y: -360}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &430712751
@@ -2957,7 +2957,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _currentGameData: {fileID: 11400000, guid: d3bc72eb65b744b38b47c6078b638b37, type: 2}
-  _audioSettings: {fileID: 11400000, guid: faaf5fc2ef5034b09aa871bd23c1e5f4, type: 2}
+  _gameplayAudioDatabase: {fileID: 11400000, guid: faaf5fc2ef5034b09aa871bd23c1e5f4, type: 2}
   _audioManager: {fileID: 5049493395488262405}
   _gameplayManager: {fileID: 4633704855005933654}
   _gridBoxController: {fileID: 197992449}
